@@ -59,6 +59,7 @@ Window {
     Item {
         id: myurls
         focus: true
+        /*
         Keys.onPressed: (event)=> {
             if (event.key === Qt.Key_Q) Qt.quit()
             if (event.key === Qt.Key_F)
@@ -80,7 +81,7 @@ Window {
                 else
                     player.play()
 
-        }
+        }*/
         Menu {
             id: contextMenu
             MenuItem {

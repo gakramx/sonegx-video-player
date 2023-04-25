@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/themes/Theme.qml</file>
+        <file>qml/themes/Theme1.qml</file>
+        <file>qml/themes/Theme2.qml</file>
+        <file>qml/main.qml</file>
+        <file>qml/qmldir</file>
+        <file>qml/Style.qml</file>
+        <file>qml/controls/TopBarButton.qml</file>
+        <file>qml/controls/CustomSwitch.qml</file>
+        <file>qml/controls/LeftButton.qml</file>
+    </qresource>
+</RCC>
