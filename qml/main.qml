@@ -186,6 +186,7 @@ Window {
                                           Style.cur=2
                                       }
                 }
+
                        Video {
                            id: player
                            anchors.fill: parent
@@ -207,6 +208,13 @@ Window {
                                        contextMenu.popup()
                                    else if (mouse.button === Qt.LeftButton)
                                        return
+                               }
+                               onDoubleClicked: {
+                                   if (player.playbackState == MediaPlayer.PlayingState){
+                                       player.pause()
+                                   }
+                                    else
+                                player.play()
                                }
                            }
                        }

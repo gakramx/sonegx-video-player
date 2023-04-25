@@ -8,8 +8,6 @@ Theme {
     else return theme2
     property Theme theme1: Theme1 { }
     property Theme theme2: Theme2 { }
-
-
     bgColor: (current && current.bgColor ? current.bgColor : 'defaultBgColor')
     fColor: (current && current.fColor ? current.fColor : 'defaultFColor')
     sColor: (current && current.sColor ? current.sColor : 'defaultSColor')
