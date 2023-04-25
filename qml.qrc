@@ -9,5 +9,6 @@
         <file>qml/controls/TopBarButton.qml</file>
         <file>qml/controls/CustomSwitch.qml</file>
         <file>qml/controls/LeftButton.qml</file>
+        <file>qml/controls/MenuButton.qml</file>
     </qresource>
 </RCC>
