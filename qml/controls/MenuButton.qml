@@ -23,8 +23,9 @@ Button {
                                        menutbutton.hovered ? colorMouseOver : colorDefault
                                    }
     }
-    implicitWidth: 200
-    implicitHeight: 40
+    implicitWidth: 80
+    implicitHeight: 80
+    z:1
     text: qsTr("Button")
     icon.color: "#ffffff"
     font.pointSize: 9
@@ -34,12 +35,10 @@ Button {
 
         Image {
             id: iconBtn
+            anchors.fill: parent
             sourceSize.height: 24
             sourceSize.width: 24
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
             source: btnIconSource
-            anchors.leftMargin: 5
             fillMode: Image.PreserveAspectFit
             antialiasing: true
         }

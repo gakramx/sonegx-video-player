@@ -230,13 +230,14 @@ Window {
                 }
 
                 Rectangle {
+
                     id: playerMenu
                     y: 597
                     height: 0
                     opacity: 0.569
                     z:1
                     clip:true
-                    color: "#ffffff"
+                    color: Style.bgColor
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
@@ -279,6 +280,46 @@ Window {
                         duration: 200
                         easing.type: Easing.Linear
                     }
+
+                    Row {
+                        id: rowButtons
+                        width: 242
+                        height: 86
+                        z:1
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        rightPadding: 2
+                        leftPadding: 2
+                        bottomPadding: 2
+                        topPadding: 2
+                        spacing: 4
+
+                        MenuButton {
+                            id: menuButton
+
+                        }
+
+                        MenuButton {
+                            id: menuButton1
+                        }
+
+                        MenuButton {
+                            id: menuButton2
+                        }
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onEntered: {
+                            console.log("Entering: ")
+                            timeranimationMenu2.stop()
+                        }
+                        onExited: {
+                            console.log("Exiting: ")
+                            timeranimationMenu2.restart()
+                        }
+                    }
+
                 }
 
             }
@@ -304,7 +345,6 @@ Window {
                     id: mouseResize
                     anchors.fill: parent
                     onDoubleClicked: {internal.maximizeRestore()
-
                     }
                     DragHandler {
                         onActiveChanged: if(active){
