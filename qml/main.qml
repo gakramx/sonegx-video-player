@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import QtMultimedia
 import QtQuick.Dialogs
+import QtQml
 Window {
 
     flags: Qt.Window | Qt.FramelessWindowHint
@@ -86,19 +87,19 @@ Window {
         }
     }
     Menu {
-          id: contextMenu
-          MenuItem {
-              text: 'open File'
-              onTriggered: dlg.visible = true
-          }
-          MenuSeparator {
-          }
-          MenuItem {
-              text: 'Exit'
-              onTriggered: player.play()
-          }
+        id: contextMenu
+        MenuItem {
+            text: 'open File'
+            onTriggered: dlg.visible = true
+        }
+        MenuSeparator {
+        }
+        MenuItem {
+            text: 'Exit'
+            onTriggered: player.play()
+        }
 
-      }
+    }
 
     Rectangle {
         id: bg
@@ -157,7 +158,7 @@ Window {
 
             Rectangle {
                 id: content
-                 color: "black"
+                color: "black"
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: topBar.bottom
@@ -187,40 +188,100 @@ Window {
                                       }
                 }
 
-                       Video {
-                           id: player
-                           anchors.fill: parent
+                Video {
+                    id: player
+                    anchors.fill: parent
 
-                           volume: 0.9
-                           z:2
-                           MouseArea{
-                               id: iMouseArea
-                               acceptedButtons: Qt.LeftButton | Qt.RightButton
-                               property int prevX: 0
-                               property int prevY: 0
-                               anchors.fill: parent
+                    volume: 0.9
+
+                    MouseArea{
+                        id: iMouseArea
+                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+                        property int prevX: 0
+                        property int prevY: 0
+                        anchors.fill: parent
 
 
-                               onPressed:  (mouse)=>  {prevX=mouse.x; prevY=mouse.y}
+                        onPressed:  (mouse)=>  {prevX=mouse.x; prevY=mouse.y}
 
-                               onClicked:  (mouse)=> {
-                                   if (mouse.button === Qt.RightButton)
-                                       contextMenu.popup()
-                                   else if (mouse.button === Qt.LeftButton)
-                                       return
-                               }
-                               onDoubleClicked: {
-                                   if (player.playbackState == MediaPlayer.PlayingState){
-                                       player.pause()
-                                   }
-                                    else
+                        onClicked:  (mouse)=> {
+                                        if (mouse.button === Qt.RightButton)
+                                        contextMenu.popup()
+                                        else if (mouse.button === Qt.LeftButton)
+                                        {
+                                            if(player.playbackState == MediaPlayer.PlayingState){
+                                                animationOpenMenu2.start()
+
+                                                timeranimationMenu2.restart()
+                                            }
+
+                                        }
+                                    }
+                        onDoubleClicked: {
+                            if (player.playbackState == MediaPlayer.PlayingState){
+                                player.pause()
+                            }
+                            else{
                                 player.play()
-                               }
-                           }
-                       }
+                            }
+                            animationMenu.running = true
+                        }
+                    }
+                }
+
+                Rectangle {
+                    id: playerMenu
+                    y: 597
+                    height: 0
+                    opacity: 0.569
+                    z:1
+                    clip:true
+                    color: "#ffffff"
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 0
+                    anchors.rightMargin: 0
+                    anchors.leftMargin: 0
+                    PropertyAnimation{
+                        id: animationMenu
+                        target: playerMenu
+                        property: "height"
+                        running: false
+                        to:
+                            if(player.playbackState != MediaPlayer.PlayingState) return 200; else return 0
+                        duration: 200
+                        easing.type: Easing.Linear
+                    }
+                    PropertyAnimation{
+                        id: animationOpenMenu2
+                        target: playerMenu
+                        property: "height"
+                        running: false
+                        to:200
+                        duration: 200
+                        easing.type: Easing.Linear
+                    }
+                    PropertyAnimation{
+                        id: animationCloseMenu2
+                        target: playerMenu
+                        property: "height"
+                        running: false
+                        to:0
+                        duration: 200
+                        easing.type: Easing.Linear
+                    }
+                }
 
             }
-
+            Timer {
+                id:timeranimationMenu2
+                interval: 2000; running: false; repeat: false
+                onTriggered:{
+                    console.log(" treggggggggggggggggggggggggggg")
+                    animationCloseMenu2.start()
+                }
+            }
             Rectangle {
                 id: topBar
                 height: 23
@@ -258,8 +319,8 @@ Window {
                 DragHandler {
                     target: null
                     onActiveChanged: if (active){
-                                                 mainWindow.startSystemResize(Qt.RightEdge | Qt.BottomEdge)
-                                             }
+                                         mainWindow.startSystemResize(Qt.RightEdge | Qt.BottomEdge)
+                                     }
                 }
                 anchors.bottomMargin: 0
                 cursorShape: Qt.SizeFDiagCursor
