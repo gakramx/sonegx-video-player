@@ -187,23 +187,17 @@ Window {
                                           Style.cur=2
                                       }
                 }
-
                 Video {
                     id: player
                     anchors.fill: parent
-
                     volume: 0.9
-
                     MouseArea{
                         id: iMouseArea
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
                         property int prevX: 0
                         property int prevY: 0
                         anchors.fill: parent
-
-
                         onPressed:  (mouse)=>  {prevX=mouse.x; prevY=mouse.y}
-
                         onClicked:  (mouse)=> {
                                         if (mouse.button === Qt.RightButton)
                                         contextMenu.popup()
@@ -218,13 +212,12 @@ Window {
                         onDoubleClicked: {
                             if (player.playbackState == MediaPlayer.PlayingState){
                                 player.pause()
-                                 animationOpenMenu.start()
+                                animationOpenMenu.start()
                             }
                             else{
                                 player.play()
-                                 animationCloseMenu.start()
+                                animationCloseMenu.start()
                             }
-
                         }
                     }
                 }
@@ -234,16 +227,17 @@ Window {
                     id: playerMenu
                     y: 597
                     height: 0
-                    opacity: 0.569
+                    opacity: 0.7
                     z:1
                     clip:true
-                    color: Style.bgColor
+                    color: Style.hColor
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 0
                     anchors.rightMargin: 0
                     anchors.leftMargin: 0
+
                     PropertyAnimation{
                         id: animationOpenMenu
                         target: playerMenu
@@ -296,27 +290,32 @@ Window {
 
                         MenuButton {
                             id: menuButton
+                            onHoveredChanged: hovered ? timeranimationMenu2.stop():
+                                                        timeranimationMenu2.restart();
 
                         }
 
                         MenuButton {
                             id: menuButton1
+                            onHoveredChanged: hovered ? timeranimationMenu2.stop():
+                                                        timeranimationMenu2.restart();
                         }
 
                         MenuButton {
                             id: menuButton2
+                            onHoveredChanged: hovered ? timeranimationMenu2.stop():
+                                                        timeranimationMenu2.restart();
                         }
                     }
                     MouseArea {
                         anchors.fill: parent
                         hoverEnabled: true
                         onEntered: {
-                            console.log("Entering: ")
                             timeranimationMenu2.stop()
                         }
                         onExited: {
-                            console.log("Exiting: ")
-                            timeranimationMenu2.restart()
+                            if(!menuButton1.hovered && !menuButton1.hovered  && !menuButton2.hovered)
+                                timeranimationMenu2.restart()
                         }
                     }
 
@@ -328,7 +327,7 @@ Window {
                 interval: 2000; running: false; repeat: false
                 onTriggered:{
                     if(player.playbackState == MediaPlayer.PlayingState)
-                    animationCloseMenu2.start()
+                        animationCloseMenu2.start()
                 }
             }
             Rectangle {

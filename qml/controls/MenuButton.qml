@@ -54,6 +54,7 @@ Button {
     }
 
     background: Rectangle{
+
         color: "#00000000"
         radius: 0
         border.color:borderColor
