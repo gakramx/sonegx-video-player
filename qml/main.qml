@@ -69,6 +69,21 @@ Window {
             internal.resetResizeBorders()
             topBarMaxBtn.btnIconSource = "qrc:/images/icons/cil-window-maximize.svg"
         }
+        function msToTimeString(duration) {
+            var milliseconds = Math.floor((duration % 1000) / 100),
+            seconds = Math.floor((duration / 1000) % 60),
+            minutes = Math.floor((duration / (1000 * 60)) % 60),
+            hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+
+            hours = (hours < 10) ? "0" + hours : hours;
+            minutes = (minutes < 10) ? "0" + minutes : minutes;
+            seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+            return hours + ":" + minutes + ":" + seconds; //+ "." + milliseconds;
+        }
+        function toMilliseconds(hrs,min,sec){
+            return (hrs*60*60+min*60+sec)*1000;
+        }
     }
 
     FileDialog {
@@ -211,22 +226,33 @@ Window {
                                     }
                         onDoubleClicked: {
                             if (player.playbackState == MediaPlayer.PlayingState){
+                                playBtn.btnIconSource= "qrc:/images/icons/cil-media-play.svg"
                                 player.pause()
                                 animationOpenMenu.start()
                             }
                             else{
+                                playBtn.btnIconSource= "qrc:/images/icons/cil-media-pause.svg"
                                 player.play()
                                 animationCloseMenu.start()
                             }
                         }
                     }
+                    property string timeText: {
+                        var positionSeconds = Math.floor(player.position)
+                        var hours = Math.floor(positionSeconds / 3600)
+                        var minutes = Math.floor((positionSeconds - hours * 3600) / 60)
+                        var seconds = Math.floor(positionSeconds - hours * 3600 - minutes * 60)
+
+                        return hours.toString() + ":" + minutes.toString() + ":" + seconds.toString()
+                                + " / " + (player.duration / 3600).toFixed(0) + ":" +
+                                ((player.duration / 60) % 60).toFixed(0) + ":" +
+                                (player.duration % 60).toFixed(0)
+                    }
                 }
-
                 Rectangle {
-
                     id: playerMenu
                     y: 597
-                    height: 0
+                    height: 200
                     opacity: 0.7
                     z:1
                     clip:true
@@ -274,20 +300,49 @@ Window {
                         duration: 200
                         easing.type: Easing.Linear
                     }
+                    Slider {
+                        id: progressSlider
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        anchors.leftMargin: 40
+                        anchors.rightMargin: 40
+                        anchors.topMargin: 20
+                        onHoveredChanged: hovered ? timeranimationMenu2.stop():
+                                                    timeranimationMenu2.restart();
+                        z:1
+                        enabled: player.seekable
+                        value: player.duration > 0 ? player.position / player.duration : 0
+                        background: Rectangle {
+                            implicitHeight: 8
+                            color: "white"
+                            radius: 3
+                            Rectangle {
+                                width: progressSlider.visualPosition * parent.width
+                                height: parent.height
+                                color: "#1D8BF8"
+                                radius: 3
+                            }
+                        }
+                        handle: Item {}
+                        onMoved: function () {
+                            player.position = player.duration * progressSlider.position
+                        }
+                    }
 
                     Row {
                         id: rowButtons
                         width: 242
                         height: 86
+                        anchors.top: parent.top
+                        anchors.topMargin: 59
                         z:1
-                        anchors.verticalCenter: parent.verticalCenter
                         anchors.horizontalCenter: parent.horizontalCenter
                         rightPadding: 2
                         leftPadding: 2
                         bottomPadding: 2
                         topPadding: 2
                         spacing: 4
-
                         MenuButton {
                             id: menuButton
                             onHoveredChanged: hovered ? timeranimationMenu2.stop():
@@ -296,11 +351,22 @@ Window {
                         }
 
                         MenuButton {
-                            id: menuButton1
+                            id: playBtn
                             onHoveredChanged: hovered ? timeranimationMenu2.stop():
                                                         timeranimationMenu2.restart();
-                        }
+                            btnIconSource: "qrc:/images/icons/cil-media-play.svg"
+                            onClicked: {
+                                if (player.playbackState == MediaPlayer.PlayingState){
+                                    player.pause()
+                                    playBtn.btnIconSource= "qrc:/images/icons/cil-media-play.svg"
+                                }
+                                else{
+                                    player.play()
+                                    playBtn.btnIconSource= "qrc:/images/icons/cil-media-pause.svg"
+                                }
 
+                            }
+                        }
                         MenuButton {
                             id: menuButton2
                             onHoveredChanged: hovered ? timeranimationMenu2.stop():
@@ -308,14 +374,34 @@ Window {
                         }
                     }
                     MouseArea {
+                        id: mouseArea
                         anchors.fill: parent
                         hoverEnabled: true
                         onEntered: {
                             timeranimationMenu2.stop()
                         }
                         onExited: {
-                            if(!menuButton1.hovered && !menuButton1.hovered  && !menuButton2.hovered)
+                            if(!progressSlider.hovered && !menuButton.hovered && !playBtn.hovered  && !menuButton2.hovered)
                                 timeranimationMenu2.restart()
+                        }
+
+                        Label {
+                            id: label
+                            text: internal.msToTimeString(
+                                      player.position) + " / " + internal.msToTimeString(
+                                      player.duration)
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.top: parent.top
+                            anchors.bottom: parent.bottom
+                            horizontalAlignment: Text.AlignLeft
+                            font.bold: true
+                            font.pointSize: 14
+                            anchors.rightMargin: 803
+                            anchors.topMargin: 50
+                            anchors.bottomMargin: 117
+                            anchors.leftMargin: 40
+
                         }
                     }
 

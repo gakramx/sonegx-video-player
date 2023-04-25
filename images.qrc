@@ -4,17 +4,11 @@
         <file>images/icons/cil-window-minimize.svg</file>
         <file>images/icons/cil-window-restore.svg</file>
         <file>images/icons/cil-x.svg</file>
-        <file>images/icons/cil-mood-very-good.svg</file>
         <file>images/icons/cil-settings.svg</file>
         <file>images/icons/cil-user.svg</file>
-        <file>images/icons/cil-arrow-right.svg</file>
-        <file>images/icons/cil-shield-alt.svg</file>
         <file>images/icons/cil-home.svg</file>
-        <file>images/icons/cil-envelope-closed.svg</file>
-        <file>images/icons/cil-account-logout.svg</file>
-        <file>images/icons/cil-cash.svg</file>
-        <file>images/icons/cil-chart-line.svg</file>
-        <file>images/icons/cil-group.svg</file>
         <file>images/icons/cil-info.svg</file>
+        <file>images/icons/cil-media-pause.svg</file>
+        <file>images/icons/cil-media-play.svg</file>
     </qresource>
 </RCC>

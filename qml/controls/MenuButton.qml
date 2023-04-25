@@ -23,8 +23,8 @@ Button {
                                        menutbutton.hovered ? colorMouseOver : colorDefault
                                    }
     }
-    implicitWidth: 80
-    implicitHeight: 80
+    implicitWidth: 64
+    implicitHeight: 64
     z:1
     text: qsTr("Button")
     icon.color: "#ffffff"
@@ -36,11 +36,11 @@ Button {
         Image {
             id: iconBtn
             anchors.fill: parent
-            sourceSize.height: 24
-            sourceSize.width: 24
+           sourceSize.height: 128
+           sourceSize.width: 128
             source: btnIconSource
             fillMode: Image.PreserveAspectFit
-            antialiasing: true
+           // antialiasing: true
         }
 
         ColorOverlay{
