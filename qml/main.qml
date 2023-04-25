@@ -183,29 +183,10 @@ Window {
                 anchors.leftMargin: 5
                 anchors.bottomMargin: 5
                 clip: true
-
-                CustomSwitch{
-                    id:switchDark
-                    width: 153
-                    height: 38
-                    z:0
-                    text: "Dark "
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    colorDefault:Style.fColor
-                    colorChecked:Style.sColor
-                    colorText:Style.textColor
-                    onCheckedChanged: if(switchDark.checked==true){
-                                          Style.cur=1
-                                      }
-                                      else{
-                                          Style.cur=2
-                                      }
-                }
                 Video {
                     id: player
                     anchors.fill: parent
-                    volume: 0.9
+                    volume: volumeSlider.value
                     MouseArea{
                         id: iMouseArea
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -401,12 +382,22 @@ Window {
                             anchors.topMargin: 50
                             anchors.bottomMargin: 117
                             anchors.leftMargin: 40
-
+                        }
+                        Slider {
+                            id: volumeSlider
+                            x: 800
+                            width: 191
+                            height: 33
+                            anchors.top: parent.top
+                            anchors.right: parent.right
+                            anchors.margins: 20
+                            anchors.rightMargin: 40
+                            anchors.topMargin: 39
+                            // orientation: Qt.Vertical
+                            value: 0.5
                         }
                     }
-
                 }
-
             }
             Timer {
                 id:timeranimationMenu2
