@@ -211,20 +211,20 @@ Window {
                                         {
                                             if(player.playbackState == MediaPlayer.PlayingState){
                                                 animationOpenMenu2.start()
-
                                                 timeranimationMenu2.restart()
                                             }
-
                                         }
                                     }
                         onDoubleClicked: {
                             if (player.playbackState == MediaPlayer.PlayingState){
                                 player.pause()
+                                 animationOpenMenu.start()
                             }
                             else{
                                 player.play()
+                                 animationCloseMenu.start()
                             }
-                            animationMenu.running = true
+
                         }
                     }
                 }
@@ -244,12 +244,20 @@ Window {
                     anchors.rightMargin: 0
                     anchors.leftMargin: 0
                     PropertyAnimation{
-                        id: animationMenu
+                        id: animationOpenMenu
                         target: playerMenu
                         property: "height"
                         running: false
-                        to:
-                            if(player.playbackState != MediaPlayer.PlayingState) return 200; else return 0
+                        to:200
+                        duration: 200
+                        easing.type: Easing.Linear
+                    }
+                    PropertyAnimation{
+                        id: animationCloseMenu
+                        target: playerMenu
+                        property: "height"
+                        running: false
+                        to:0
                         duration: 200
                         easing.type: Easing.Linear
                     }
@@ -278,7 +286,7 @@ Window {
                 id:timeranimationMenu2
                 interval: 2000; running: false; repeat: false
                 onTriggered:{
-                    console.log(" treggggggggggggggggggggggggggg")
+                    if(player.playbackState == MediaPlayer.PlayingState)
                     animationCloseMenu2.start()
                 }
             }
@@ -292,7 +300,6 @@ Window {
                 anchors.rightMargin: 147
                 anchors.leftMargin: 105
                 anchors.topMargin: 0
-
                 MouseArea {
                     id: mouseResize
                     anchors.fill: parent
@@ -305,9 +312,7 @@ Window {
                                          }
                     }
                 }
-
             }
-
             MouseArea {
                 id: resizeWindow
                 x: 1020
