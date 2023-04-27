@@ -233,7 +233,7 @@ Window {
                 Rectangle {
                     id: playerMenu
                     y: 597
-                    height: 200
+                    height: 0
                     opacity: 0.7
                     z:1
                     clip:true
