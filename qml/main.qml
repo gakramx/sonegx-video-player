@@ -187,7 +187,8 @@ Window {
                     id: player
                     anchors.fill: parent
                     volume: volumeSlider.value
-                    playbackRate:speedSlider.value
+                    playbackRate: 1.0
+                    fillMode: VideoOutput.Stretch
                     MouseArea{
                         id: iMouseArea
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -230,6 +231,28 @@ Window {
                                 ((player.duration / 60) % 60).toFixed(0) + ":" +
                                 (player.duration % 60).toFixed(0)
                     }
+                    function updatePlaybackRate(delta) {
+                          // modify the playback rate by adding the delta value
+                          playbackRate += delta
+                      }
+
+                    function switchFillMode() {
+                        // switch the fill mode to the next value in the sequence
+                        switch (player.fillMode) {
+                            case VideoOutput.Stretch:
+                                player.fillMode = VideoOutput.PreserveAspectCrop
+                                break
+                            case VideoOutput.PreserveAspectCrop:
+                                player.fillMode = VideoOutput.PreserveAspectFit
+                                break
+                            case VideoOutput.PreserveAspectFit:
+                                player.fillMode = VideoOutput.Stretch
+                                break
+                            default:
+                                player.fillMode = VideoOutput.Stretch
+                        }
+                    }
+
                 }
                 Rectangle {
                     id: playerMenu
@@ -309,6 +332,7 @@ Window {
                         handle: Item {}
                         onMoved: function () {
                             player.position = player.duration * progressSlider.position
+
                         }
                     }
 
@@ -326,9 +350,10 @@ Window {
                         topPadding: 2
                         spacing: 4
                         MenuButton {
-                            id: menuButton
+                            id: decreaseSpeed
                             onHoveredChanged: hovered ? timeranimationMenu2.stop():
                                                         timeranimationMenu2.restart();
+                                onClicked: player.updatePlaybackRate(-0.1) // decrease the playback rate by 0.1
 
                         }
 
@@ -346,13 +371,18 @@ Window {
                                     player.play()
                                     playBtn.btnIconSource= "qrc:/images/icons/cil-media-pause.svg"
                                 }
-
                             }
                         }
                         MenuButton {
-                            id: menuButton2
+                            id: increaseSpeed
                             onHoveredChanged: hovered ? timeranimationMenu2.stop():
                                                         timeranimationMenu2.restart();
+                                onClicked: player.updatePlaybackRate(0.1) // increase the playback rate by 0.1
+                        }
+
+                        MenuButton {
+                            id: switchFillMode
+                              onClicked: player.switchFillMode()
                         }
                     }
                     MouseArea {
@@ -363,7 +393,7 @@ Window {
                             timeranimationMenu2.stop()
                         }
                         onExited: {
-                            if(!progressSlider.hovered && !menuButton.hovered && !playBtn.hovered  && !menuButton2.hovered)
+                            if(!progressSlider.hovered && !decreaseSpeed.hovered && !playBtn.hovered  && !increaseSpeed.hovered)
                                 timeranimationMenu2.restart()
                         }
 
@@ -412,24 +442,11 @@ Window {
                             font.pointSize: 14
                         }
                     }
-
-                    Slider {
-                        id: speedSlider
-                        x: 800
-                        width: 191
-                        height: 33
-                        anchors.right: parent.right
-                        anchors.top: parent.top
-                        anchors.margins: 20
-                        anchors.rightMargin: 40
-                        anchors.topMargin: 80
-                        value: 1.0
-                    }
                 }
             }
             Timer {
                 id:timeranimationMenu2
-                interval: 2000; running: false; repeat: false
+                interval: 5000; running: false; repeat: false
                 onTriggered:{
                     if(player.playbackState == MediaPlayer.PlayingState)
                         animationCloseMenu2.start()
