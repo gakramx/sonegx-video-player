@@ -187,6 +187,7 @@ Window {
                     id: player
                     anchors.fill: parent
                     volume: volumeSlider.value
+                    playbackRate:speedSlider.value
                     MouseArea{
                         id: iMouseArea
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -233,7 +234,7 @@ Window {
                 Rectangle {
                     id: playerMenu
                     y: 597
-                    height: 0
+                    height: 200
                     opacity: 0.7
                     z:1
                     clip:true
@@ -367,7 +368,7 @@ Window {
                         }
 
                         Label {
-                            id: label
+                            id: timeLabel
                             text: internal.msToTimeString(
                                       player.position) + " / " + internal.msToTimeString(
                                       player.duration)
@@ -385,17 +386,44 @@ Window {
                         }
                         Slider {
                             id: volumeSlider
-                            x: 800
-                            width: 191
+                            x: 724
+                            width: 200
                             height: 33
+
                             anchors.top: parent.top
                             anchors.right: parent.right
                             anchors.margins: 20
-                            anchors.rightMargin: 40
+                            anchors.rightMargin: 90
                             anchors.topMargin: 39
                             // orientation: Qt.Vertical
                             value: 0.5
                         }
+
+                        Label {
+                            id: volumeLabel
+                            x: 714
+                            text: Math.floor(volumeSlider.value*100) + "%"
+                            anchors.right: parent.right
+                            anchors.top: parent.top
+                            anchors.rightMargin: 40
+                            anchors.topMargin: 41
+                            horizontalAlignment: Text.AlignLeft
+                            font.bold: true
+                            font.pointSize: 14
+                        }
+                    }
+
+                    Slider {
+                        id: speedSlider
+                        x: 800
+                        width: 191
+                        height: 33
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        anchors.margins: 20
+                        anchors.rightMargin: 40
+                        anchors.topMargin: 80
+                        value: 1.0
                     }
                 }
             }
