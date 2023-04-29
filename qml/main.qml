@@ -5,7 +5,7 @@ import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import QtMultimedia
 import QtQuick.Dialogs
-import QtQml
+
 Window {
 
     flags: Qt.Window | Qt.FramelessWindowHint
@@ -19,6 +19,7 @@ Window {
     minimumWidth: 800
     property int windowStatus: 0
     property int windowMargin: 2
+
     QtObject{
         id: internal
         function resetResizeBorders(){
@@ -88,12 +89,13 @@ Window {
 
     FileDialog {
         id: dlg
-        nameFilters: [ "Video files (*.mp4 *.flv *.ts *.mpg *.3gp *.ogv *.m4v *.mov)", "All files (*)" ]
+        //    nameFilters: [ "Video files (*.mp4 *.flv *.ts *.mpg *.3gp *.ogv *.m4v *.mov)", "All files (*)" ]
         title: "Please choose a video file"
         modality: Qt.WindowModal
         onAccepted: {
             console.log("You chose: " + dlg.currentFile)
             player.source = dlg.currentFile
+            player.play()
             return
         }
         onRejected: {
@@ -173,7 +175,7 @@ Window {
 
             Rectangle {
                 id: content
-                color: "black"
+                color: "transparent"
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: topBar.bottom
@@ -201,10 +203,12 @@ Window {
                                         contextMenu.popup()
                                         else if (mouse.button === Qt.LeftButton)
                                         {
-                                            if(player.playbackState == MediaPlayer.PlayingState){
+                                            if(player.playbackState == MediaPlayer.PlayingState && playerMenu.height==0 ){
                                                 animationOpenMenu2.start()
                                                 timeranimationMenu2.restart()
                                             }
+                                            else if(player.playbackState == MediaPlayer.PlayingState )
+                                             animationCloseMenu.start()
                                         }
                                     }
                         onDoubleClicked: {
@@ -232,32 +236,40 @@ Window {
                                 (player.duration % 60).toFixed(0)
                     }
                     function updatePlaybackRate(delta) {
-                          // modify the playback rate by adding the delta value
-                          playbackRate += delta
-                      }
+                        // modify the playback rate by adding the delta value
+                        playbackRate += delta
+                    }
 
                     function switchFillMode() {
                         // switch the fill mode to the next value in the sequence
                         switch (player.fillMode) {
-                            case VideoOutput.Stretch:
-                                player.fillMode = VideoOutput.PreserveAspectCrop
-                                break
-                            case VideoOutput.PreserveAspectCrop:
-                                player.fillMode = VideoOutput.PreserveAspectFit
-                                break
-                            case VideoOutput.PreserveAspectFit:
-                                player.fillMode = VideoOutput.Stretch
-                                break
-                            default:
-                                player.fillMode = VideoOutput.Stretch
+                        case VideoOutput.Stretch:
+                            player.fillMode = VideoOutput.PreserveAspectCrop
+                            break
+                        case VideoOutput.PreserveAspectCrop:
+                            player.fillMode = VideoOutput.PreserveAspectFit
+                            break
+                        case VideoOutput.PreserveAspectFit:
+                            player.fillMode = VideoOutput.Stretch
+                            break
+                        default:
+                            player.fillMode = VideoOutput.Stretch
                         }
+                    }
+                    onPlaybackStateChanged: {
+                    if(playbackState == MediaPlayer.PlayingState)
+                           playBtn.btnIconSource= "qrc:/images/icons/cil-media-pause.svg"
+                    else{
+                          playBtn.btnIconSource= "qrc:/images/icons/cil-media-play.svg"
+                    }
+
                     }
 
                 }
                 Rectangle {
                     id: playerMenu
                     y: 597
-                    height: 200
+                    height: 0
                     opacity: 0.7
                     z:1
                     clip:true
@@ -353,7 +365,7 @@ Window {
                             id: decreaseSpeed
                             onHoveredChanged: hovered ? timeranimationMenu2.stop():
                                                         timeranimationMenu2.restart();
-                                onClicked: player.updatePlaybackRate(-0.1) // decrease the playback rate by 0.1
+                            onClicked: player.updatePlaybackRate(-0.1) // decrease the playback rate by 0.1
 
                         }
 
@@ -377,12 +389,12 @@ Window {
                             id: increaseSpeed
                             onHoveredChanged: hovered ? timeranimationMenu2.stop():
                                                         timeranimationMenu2.restart();
-                                onClicked: player.updatePlaybackRate(0.1) // increase the playback rate by 0.1
+                            onClicked: player.updatePlaybackRate(0.1) // increase the playback rate by 0.1
                         }
 
                         MenuButton {
                             id: switchFillMode
-                              onClicked: player.switchFillMode()
+                            onClicked: player.switchFillMode()
                         }
                     }
                     MouseArea {
@@ -441,6 +453,54 @@ Window {
                             font.bold: true
                             font.pointSize: 14
                         }
+                    }
+                }
+
+                Rectangle {
+                    id: oprnArea
+                    y: 23
+                    width: 256
+                    height: 319
+                    color: "transparent"
+                    anchors.verticalCenter: parent.verticalCenter
+                    antialiasing: true
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    Image {
+                        id: image
+                        width: 256
+                        height: 256
+                        anchors.top: parent.top
+                        horizontalAlignment: Image.AlignHCenter
+                        source: "qrc:/images/sonegx_open.png"
+                        sourceSize.height: 256
+                        sourceSize.width: 256
+                        anchors.topMargin: 0
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        antialiasing: true
+                        fillMode: Image.PreserveAspectFit
+                    }
+
+                    MenuButton {
+                        id: openButton
+                        text: "Open"
+                        colorDefault:"transparent"
+                        borderColor:  "#636394"
+                        anchors.top: image.bottom
+                        anchors.topMargin: 0
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        contentItem: Text{
+                            color: "#ffffff"
+                            text: "+"
+                            anchors.verticalCenter: parent.verticalCenter
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            font.bold: true
+                            font.pointSize: 29
+                            anchors.horizontalCenter: parent.horizontalCenter
+                         //   font: openButton.font
+                        }
+                        onClicked:   dlg.visible = true
                     }
                 }
             }

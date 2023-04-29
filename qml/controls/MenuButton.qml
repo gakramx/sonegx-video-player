@@ -6,9 +6,9 @@ Button {
     id: menutbutton
 
     // Custom Properties
-    property color colorDefault: "#1d1d2b"
+    property color colorDefault:   "#1d1d2b"
     property color colorMouseOver: "#40405f"
-    property color colorTextBtn: "#ffffff"
+    property color colorTextBtn: "black"
     property color colorPressed: "#55aaff"
     property color btnColorOverlay: "#ffffff"
     property color borderColor:  "#33334c"
@@ -40,7 +40,7 @@ Button {
            sourceSize.width: 128
             source: btnIconSource
             fillMode: Image.PreserveAspectFit
-           // antialiasing: true
+            antialiasing: true
         }
 
         ColorOverlay{

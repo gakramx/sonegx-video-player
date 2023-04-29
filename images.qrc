@@ -10,5 +10,6 @@
         <file>images/icons/cil-info.svg</file>
         <file>images/icons/cil-media-pause.svg</file>
         <file>images/icons/cil-media-play.svg</file>
+        <file>images/sonegx_open.png</file>
     </qresource>
 </RCC>
