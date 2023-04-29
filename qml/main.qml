@@ -204,8 +204,8 @@ Window {
                                         else if (mouse.button === Qt.LeftButton)
                                         {
                                             if(player.playbackState == MediaPlayer.PlayingState && playerMenu.height==0 ){
-                                                animationOpenMenu2.start()
-                                                timeranimationMenu2.restart()
+                                                animationOpenMenu.start()
+                                                timeranimationMenu.restart()
                                             }
                                             else if(player.playbackState == MediaPlayer.PlayingState )
                                              animationCloseMenu.start()
@@ -298,25 +298,7 @@ Window {
                         to:0
                         duration: 200
                         easing.type: Easing.Linear
-                    }
-                    PropertyAnimation{
-                        id: animationOpenMenu2
-                        target: playerMenu
-                        property: "height"
-                        running: false
-                        to:200
-                        duration: 200
-                        easing.type: Easing.Linear
-                    }
-                    PropertyAnimation{
-                        id: animationCloseMenu2
-                        target: playerMenu
-                        property: "height"
-                        running: false
-                        to:0
-                        duration: 200
-                        easing.type: Easing.Linear
-                    }
+                    }        
                     Slider {
                         id: progressSlider
                         anchors.left: parent.left
@@ -325,8 +307,8 @@ Window {
                         anchors.leftMargin: 40
                         anchors.rightMargin: 40
                         anchors.topMargin: 20
-                        onHoveredChanged: hovered ? timeranimationMenu2.stop():
-                                                    timeranimationMenu2.restart();
+                        onHoveredChanged: hovered ? timeranimationMenu.stop():
+                                                    timeranimationMenu.restart();
                         z:1
                         enabled: player.seekable
                         value: player.duration > 0 ? player.position / player.duration : 0
@@ -363,16 +345,16 @@ Window {
                         spacing: 4
                         MenuButton {
                             id: decreaseSpeed
-                            onHoveredChanged: hovered ? timeranimationMenu2.stop():
-                                                        timeranimationMenu2.restart();
+                            onHoveredChanged: hovered ? timeranimationMenu.stop():
+                                                        timeranimationMenu.restart();
                             onClicked: player.updatePlaybackRate(-0.1) // decrease the playback rate by 0.1
 
                         }
 
                         MenuButton {
                             id: playBtn
-                            onHoveredChanged: hovered ? timeranimationMenu2.stop():
-                                                        timeranimationMenu2.restart();
+                            onHoveredChanged: hovered ? timeranimationMenu.stop():
+                                                        timeranimationMenu.restart();
                             btnIconSource: "qrc:/images/icons/cil-media-play.svg"
                             onClicked: {
                                 if (player.playbackState == MediaPlayer.PlayingState){
@@ -387,8 +369,8 @@ Window {
                         }
                         MenuButton {
                             id: increaseSpeed
-                            onHoveredChanged: hovered ? timeranimationMenu2.stop():
-                                                        timeranimationMenu2.restart();
+                            onHoveredChanged: hovered ? timeranimationMenu.stop():
+                                                        timeranimationMenu.restart();
                             onClicked: player.updatePlaybackRate(0.1) // increase the playback rate by 0.1
                         }
 
@@ -402,11 +384,11 @@ Window {
                         anchors.fill: parent
                         hoverEnabled: true
                         onEntered: {
-                            timeranimationMenu2.stop()
+                            timeranimationMenu.stop()
                         }
                         onExited: {
                             if(!progressSlider.hovered && !decreaseSpeed.hovered && !playBtn.hovered  && !increaseSpeed.hovered)
-                                timeranimationMenu2.restart()
+                                timeranimationMenu.restart()
                         }
 
                         Label {
@@ -505,11 +487,11 @@ Window {
                 }
             }
             Timer {
-                id:timeranimationMenu2
+                id:timeranimationMenu
                 interval: 5000; running: false; repeat: false
                 onTriggered:{
                     if(player.playbackState == MediaPlayer.PlayingState)
-                        animationCloseMenu2.start()
+                        animationCloseMenu.start()
                 }
             }
             Rectangle {
