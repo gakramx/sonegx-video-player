@@ -20,9 +20,9 @@ Window {
     property int windowStatus: 0
     property int windowMargin: 2
 
-    QtObject{
+    QtObject {
         id: internal
-        function resetResizeBorders(){
+        function resetResizeBorders() {
             // Resize visibility
             resizeLeft.visible = true
             resizeRight.visible = true
@@ -30,8 +30,8 @@ Window {
             resizeWindow.visible = true
         }
 
-        function maximizeRestore(){
-            if(windowStatus == 0){
+        function maximizeRestore() {
+            if (windowStatus == 0) {
                 mainWindow.showMaximized()
                 windowStatus = 1
                 windowMargin = 0
@@ -41,8 +41,7 @@ Window {
                 resizeBottom.visible = false
                 resizeWindow.visible = false
                 topBarMaxBtn.btnIconSource = "qrc:/images/icons/cil-window-restore.svg"
-            }
-            else{
+            } else {
                 mainWindow.showNormal()
                 windowStatus = 0
                 windowMargin = 2
@@ -52,8 +51,8 @@ Window {
             }
         }
 
-        function ifMaximizedWindowRestore(){
-            if(windowStatus == 1){
+        function ifMaximizedWindowRestore() {
+            if (windowStatus == 1) {
                 mainWindow.showNormal()
                 windowStatus = 0
                 windowMargin = 2
@@ -63,7 +62,7 @@ Window {
             }
         }
 
-        function restoreMargins(){
+        function restoreMargins() {
             windowStatus = 0
             windowMargin = 2
             // Resize visibility
@@ -71,19 +70,17 @@ Window {
             topBarMaxBtn.btnIconSource = "qrc:/images/icons/cil-window-maximize.svg"
         }
         function msToTimeString(duration) {
-            var milliseconds = Math.floor((duration % 1000) / 100),
-            seconds = Math.floor((duration / 1000) % 60),
-            minutes = Math.floor((duration / (1000 * 60)) % 60),
-            hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+            var milliseconds = Math.floor(
+                        (duration % 1000) / 100), seconds = Math.floor((duration / 1000) % 60), minutes = Math.floor((duration / (1000 * 60)) % 60), hours = Math.floor((duration / (1000 * 60 * 60)) % 24)
 
-            hours = (hours < 10) ? "0" + hours : hours;
-            minutes = (minutes < 10) ? "0" + minutes : minutes;
-            seconds = (seconds < 10) ? "0" + seconds : seconds;
+            hours = (hours < 10) ? "0" + hours : hours
+            minutes = (minutes < 10) ? "0" + minutes : minutes
+            seconds = (seconds < 10) ? "0" + seconds : seconds
 
-            return hours + ":" + minutes + ":" + seconds; //+ "." + milliseconds;
+            return hours + ":" + minutes + ":" + seconds //+ "." + milliseconds;
         }
-        function toMilliseconds(hrs,min,sec){
-            return (hrs*60*60+min*60+sec)*1000;
+        function toMilliseconds(hrs, min, sec) {
+            return (hrs * 60 * 60 + min * 60 + sec) * 1000
         }
     }
 
@@ -94,6 +91,7 @@ Window {
         modality: Qt.WindowModal
         onAccepted: {
             console.log("You chose: " + dlg.currentFile)
+            openArea.visible = false
             player.source = dlg.currentFile
             player.play()
             return
@@ -109,20 +107,19 @@ Window {
             text: 'open File'
             onTriggered: dlg.visible = true
         }
-        MenuSeparator {
-        }
+        MenuSeparator {}
         MenuItem {
             text: 'Exit'
             onTriggered: player.play()
         }
-
     }
 
     Rectangle {
         id: bg
         color: Style.bgColor
         anchors.fill: parent
-        radius: 7
+
+        //radius: 7
         Rectangle {
             id: appContainer
             color: "#00236123"
@@ -131,7 +128,7 @@ Window {
             anchors.leftMargin: windowMargin
             anchors.bottomMargin: windowMargin
             anchors.topMargin: windowMargin
-
+            clip: true
             Row {
                 id: row
                 x: 409
@@ -178,47 +175,51 @@ Window {
                 color: "transparent"
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.top: topBar.bottom
+                anchors.top: parent.top
                 anchors.bottom: parent.bottom
-                anchors.topMargin: 15
+                anchors.topMargin: 38
                 anchors.rightMargin: 5
                 anchors.leftMargin: 5
                 anchors.bottomMargin: 5
+
                 clip: true
+
                 Video {
                     id: player
                     anchors.fill: parent
                     volume: volumeSlider.value
                     playbackRate: 1.0
                     fillMode: VideoOutput.Stretch
-                    MouseArea{
+                    MouseArea {
                         id: iMouseArea
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
                         property int prevX: 0
                         property int prevY: 0
                         anchors.fill: parent
-                        onPressed:  (mouse)=>  {prevX=mouse.x; prevY=mouse.y}
-                        onClicked:  (mouse)=> {
-                                        if (mouse.button === Qt.RightButton)
-                                        contextMenu.popup()
-                                        else if (mouse.button === Qt.LeftButton)
-                                        {
-                                            if(player.playbackState == MediaPlayer.PlayingState && playerMenu.height==0 ){
-                                                animationOpenMenu.start()
-                                                timeranimationMenu.restart()
-                                            }
-                                            else if(player.playbackState == MediaPlayer.PlayingState )
-                                             animationCloseMenu.start()
-                                        }
-                                    }
+                        onPressed: mouse => {
+                                       prevX = mouse.x
+                                       prevY = mouse.y
+                                   }
+                        onClicked: mouse => {
+                                       if (mouse.button === Qt.RightButton)
+                                       contextMenu.popup()
+                                       else if (mouse.button === Qt.LeftButton) {
+                                           if (player.playbackState == MediaPlayer.PlayingState
+                                               && playerMenu.height == 0) {
+                                               animationOpenMenu.start()
+                                               timeranimationMenu.restart()
+                                           } else if (player.playbackState
+                                                      == MediaPlayer.PlayingState)
+                                           animationCloseMenu.start()
+                                       }
+                                   }
                         onDoubleClicked: {
-                            if (player.playbackState == MediaPlayer.PlayingState){
-                                playBtn.btnIconSource= "qrc:/images/icons/cil-media-play.svg"
+                            if (player.playbackState == MediaPlayer.PlayingState) {
+                                playBtn.btnIconSource = "qrc:/images/icons/cil-media-play.svg"
                                 player.pause()
                                 animationOpenMenu.start()
-                            }
-                            else{
-                                playBtn.btnIconSource= "qrc:/images/icons/cil-media-pause.svg"
+                            } else {
+                                playBtn.btnIconSource = "qrc:/images/icons/cil-media-pause.svg"
                                 player.play()
                                 animationCloseMenu.start()
                             }
@@ -227,13 +228,16 @@ Window {
                     property string timeText: {
                         var positionSeconds = Math.floor(player.position)
                         var hours = Math.floor(positionSeconds / 3600)
-                        var minutes = Math.floor((positionSeconds - hours * 3600) / 60)
-                        var seconds = Math.floor(positionSeconds - hours * 3600 - minutes * 60)
+                        var minutes = Math.floor(
+                                    (positionSeconds - hours * 3600) / 60)
+                        var seconds = Math.floor(
+                                    positionSeconds - hours * 3600 - minutes * 60)
 
-                        return hours.toString() + ":" + minutes.toString() + ":" + seconds.toString()
-                                + " / " + (player.duration / 3600).toFixed(0) + ":" +
-                                ((player.duration / 60) % 60).toFixed(0) + ":" +
-                                (player.duration % 60).toFixed(0)
+                        return hours.toString(
+                                    ) + ":" + minutes.toString() + ":" + seconds.toString(
+                                    ) + " / " + (player.duration / 3600).toFixed(
+                                    0) + ":" + ((player.duration / 60) % 60).toFixed(0)
+                                + ":" + (player.duration % 60).toFixed(0)
                     }
                     function updatePlaybackRate(delta) {
                         // modify the playback rate by adding the delta value
@@ -257,22 +261,22 @@ Window {
                         }
                     }
                     onPlaybackStateChanged: {
-                    if(playbackState == MediaPlayer.PlayingState)
-                           playBtn.btnIconSource= "qrc:/images/icons/cil-media-pause.svg"
-                    else{
-                          playBtn.btnIconSource= "qrc:/images/icons/cil-media-play.svg"
-                    }
+                        if (playbackState == MediaPlayer.PlayingState) {
+                            progressSlider.positionRedRectangle()
 
+                            playBtn.btnIconSource = "qrc:/images/icons/cil-media-pause.svg"
+                        } else {
+                            playBtn.btnIconSource = "qrc:/images/icons/cil-media-play.svg"
+                        }
                     }
-
                 }
                 Rectangle {
                     id: playerMenu
                     y: 597
-                    height: 0
+                    height: 180
                     opacity: 0.7
-                    z:1
-                    clip:true
+                    z: 1
+                    clip: true
                     color: Style.hColor
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -281,24 +285,24 @@ Window {
                     anchors.rightMargin: 0
                     anchors.leftMargin: 0
 
-                    PropertyAnimation{
+                    PropertyAnimation {
                         id: animationOpenMenu
                         target: playerMenu
                         property: "height"
                         running: false
-                        to:200
+                        to: 200
                         duration: 200
                         easing.type: Easing.Linear
                     }
-                    PropertyAnimation{
+                    PropertyAnimation {
                         id: animationCloseMenu
                         target: playerMenu
                         property: "height"
                         running: false
-                        to:0
+                        to: 0
                         duration: 200
                         easing.type: Easing.Linear
-                    }        
+                    }
                     Slider {
                         id: progressSlider
                         anchors.left: parent.left
@@ -307,9 +311,9 @@ Window {
                         anchors.leftMargin: 40
                         anchors.rightMargin: 40
                         anchors.topMargin: 20
-                        onHoveredChanged: hovered ? timeranimationMenu.stop():
-                                                    timeranimationMenu.restart();
-                        z:1
+                        onHoveredChanged: hovered ? timeranimationMenu.stop(
+                                                        ) : timeranimationMenu.restart()
+                        z: 1
                         enabled: player.seekable
                         value: player.duration > 0 ? player.position / player.duration : 0
                         background: Rectangle {
@@ -321,23 +325,53 @@ Window {
                                 height: parent.height
                                 color: "#1D8BF8"
                                 radius: 3
+
+                                Rectangle {
+                                    id: myreact
+                                    width: 5
+                                    height: parent.height
+                                    color: "red"
+                                    visible: true
+                                }
                             }
                         }
                         handle: Item {}
                         onMoved: function () {
                             player.position = player.duration * progressSlider.position
+                        }
+                        property var targetTime: "00:22:10"
 
+                        function timeToMilliseconds(time) {
+                            var timeParts = time.split(":")
+                            var hours = parseInt(timeParts[0])
+                            var minutes = parseInt(timeParts[1])
+                            var seconds = parseInt(timeParts[2])
+                            return (hours * 60 * 60 + minutes * 60 + seconds) * 1000
+                        }
+
+                        function positionRedRectangle() {
+                            var targetPosition = timeToMilliseconds(
+                                        targetTime) / player.duration
+
+                            myreact.x = targetPosition * progressSlider.width
+                        }
+
+                        Component.onCompleted: {
+
+                            //   positionRedRectangle();
                         }
                     }
 
                     Row {
                         id: rowButtons
-                        width: 242
+                        y: 74
+                        width: 275
                         height: 86
-                        anchors.top: parent.top
-                        anchors.topMargin: 59
-                        z:1
-                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.left: parent.left
+                        anchors.bottom: parent.bottom
+                        anchors.leftMargin: 40
+                        anchors.bottomMargin: 20
+                        z: 1
                         rightPadding: 2
                         leftPadding: 2
                         bottomPadding: 2
@@ -345,39 +379,104 @@ Window {
                         spacing: 4
                         MenuButton {
                             id: decreaseSpeed
-                            onHoveredChanged: hovered ? timeranimationMenu.stop():
-                                                        timeranimationMenu.restart();
-                            onClicked: player.updatePlaybackRate(-0.1) // decrease the playback rate by 0.1
-
+                            onHoveredChanged: hovered ? timeranimationMenu.stop(
+                                                            ) : timeranimationMenu.restart()
+                            onClicked: player.updatePlaybackRate(
+                                           -0.1) // decrease the playback rate by 0.1
                         }
 
                         MenuButton {
                             id: playBtn
-                            onHoveredChanged: hovered ? timeranimationMenu.stop():
-                                                        timeranimationMenu.restart();
+                            onHoveredChanged: hovered ? timeranimationMenu.stop(
+                                                            ) : timeranimationMenu.restart()
                             btnIconSource: "qrc:/images/icons/cil-media-play.svg"
                             onClicked: {
-                                if (player.playbackState == MediaPlayer.PlayingState){
+                                if (player.playbackState == MediaPlayer.PlayingState) {
                                     player.pause()
-                                    playBtn.btnIconSource= "qrc:/images/icons/cil-media-play.svg"
-                                }
-                                else{
+                                    playBtn.btnIconSource = "qrc:/images/icons/cil-media-play.svg"
+                                } else {
                                     player.play()
-                                    playBtn.btnIconSource= "qrc:/images/icons/cil-media-pause.svg"
+                                    playBtn.btnIconSource = "qrc:/images/icons/cil-media-pause.svg"
                                 }
                             }
                         }
                         MenuButton {
                             id: increaseSpeed
-                            onHoveredChanged: hovered ? timeranimationMenu.stop():
-                                                        timeranimationMenu.restart();
-                            onClicked: player.updatePlaybackRate(0.1) // increase the playback rate by 0.1
+                            onHoveredChanged: hovered ? timeranimationMenu.stop(
+                                                            ) : timeranimationMenu.restart()
+                            onClicked: player.updatePlaybackRate(
+                                           0.1) // increase the playback rate by 0.1
                         }
 
                         MenuButton {
                             id: switchFillMode
                             onClicked: player.switchFillMode()
                         }
+                    }
+                    Row {
+                        id: rowButtons1
+                        x: 844
+                        y: 491
+                        width: 136
+                        height: 86
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        bottomPadding: 2
+                        z: 1
+                        rightPadding: 2
+                        anchors.rightMargin: 40
+                        layoutDirection: Qt.LeftToRight
+                        MenuButton {
+                            onClicked: {
+                                if (content.parent === appContainer) {
+                                    // Go fullscreen
+                                    appContainer.visible = false
+                                    content.parent = bg
+
+                                    content.anchors.topMargin = 0
+                                    content.anchors.rightMargin = 0
+                                    content.anchors.leftMargin = 0
+                                    content.anchors.bottomMargin = 0
+                                    mainWindow.visibility = "FullScreen"
+                                    console.log("appContainer " + appContainer.parent)
+                                } else {
+                                    // Restore normal size
+                                    mainWindow.visibility = "Windowed"
+                                    content.parent = appContainer
+                                    content.anchors.left = appContainer.left
+                                    content.anchors.right = appContainer.right
+                                    content.anchors.top = appContainer.top
+                                    content.anchors.bottom = appContainer.bottom
+                                    content.anchors.topMargin = 38
+                                    content.anchors.rightMargin = 5
+                                    content.anchors.leftMargin = 5
+                                    content.anchors.bottomMargin = 5
+                                    appContainer.visible = true
+                                }
+                            }
+
+                            onHoveredChanged: hovered ? timeranimationMenu.stop(
+                                                            ) : timeranimationMenu.restart()
+                        }
+
+                        MenuButton {
+                            onClicked: {
+                                if (player.playbackState == MediaPlayer.PlayingState) {
+                                    player.pause()
+                                    playBtn.btnIconSource = "qrc:/images/icons/cil-media-play.svg"
+                                } else {
+                                    player.play()
+                                    playBtn.btnIconSource = "qrc:/images/icons/cil-media-pause.svg"
+                                }
+                            }
+                            btnIconSource: "qrc:/images/icons/cil-media-play.svg"
+                            onHoveredChanged: hovered ? timeranimationMenu.stop(
+                                                            ) : timeranimationMenu.restart()
+                        }
+                        anchors.bottomMargin: 20
+                        spacing: 4
+                        leftPadding: 2
+                        topPadding: 2
                     }
                     MouseArea {
                         id: mouseArea
@@ -387,7 +486,10 @@ Window {
                             timeranimationMenu.stop()
                         }
                         onExited: {
-                            if(!progressSlider.hovered && !decreaseSpeed.hovered && !playBtn.hovered  && !increaseSpeed.hovered)
+                            if (!progressSlider.hovered
+                                    && !decreaseSpeed.hovered
+                                    && !playBtn.hovered
+                                    && !increaseSpeed.hovered)
                                 timeranimationMenu.restart()
                         }
 
@@ -404,7 +506,7 @@ Window {
                             font.bold: true
                             font.pointSize: 14
                             anchors.rightMargin: 803
-                            anchors.topMargin: 50
+                            anchors.topMargin: 40
                             anchors.bottomMargin: 117
                             anchors.leftMargin: 40
                         }
@@ -426,7 +528,7 @@ Window {
                         Label {
                             id: volumeLabel
                             x: 714
-                            text: Math.floor(volumeSlider.value*100) + "%"
+                            text: Math.floor(volumeSlider.value * 100) + "%"
                             anchors.right: parent.right
                             anchors.top: parent.top
                             anchors.rightMargin: 40
@@ -439,7 +541,7 @@ Window {
                 }
 
                 Rectangle {
-                    id: oprnArea
+                    id: openArea
                     y: 23
                     width: 256
                     height: 319
@@ -466,12 +568,12 @@ Window {
                     MenuButton {
                         id: openButton
                         text: "Open"
-                        colorDefault:"transparent"
-                        borderColor:  "#636394"
+                        colorDefault: "transparent"
+                        borderColor: "#636394"
                         anchors.top: image.bottom
                         anchors.topMargin: 0
                         anchors.horizontalCenter: parent.horizontalCenter
-                        contentItem: Text{
+                        contentItem: Text {
                             color: "#ffffff"
                             text: "+"
                             anchors.verticalCenter: parent.verticalCenter
@@ -480,17 +582,19 @@ Window {
                             font.bold: true
                             font.pointSize: 29
                             anchors.horizontalCenter: parent.horizontalCenter
-                         //   font: openButton.font
+                            //   font: openButton.font
                         }
-                        onClicked:   dlg.visible = true
+                        onClicked: dlg.visible = true
                     }
                 }
             }
             Timer {
-                id:timeranimationMenu
-                interval: 5000; running: false; repeat: false
-                onTriggered:{
-                    if(player.playbackState == MediaPlayer.PlayingState)
+                id: timeranimationMenu
+                interval: 5000
+                running: false
+                repeat: false
+                onTriggered: {
+                    if (player.playbackState == MediaPlayer.PlayingState)
                         animationCloseMenu.start()
                 }
             }
@@ -507,10 +611,11 @@ Window {
                 MouseArea {
                     id: mouseResize
                     anchors.fill: parent
-                    onDoubleClicked: {internal.maximizeRestore()
+                    onDoubleClicked: {
+                        internal.maximizeRestore()
                     }
                     DragHandler {
-                        onActiveChanged: if(active){
+                        onActiveChanged: if (active) {
                                              mainWindow.startSystemMove()
                                          }
                     }
@@ -526,8 +631,9 @@ Window {
                 anchors.rightMargin: 0
                 DragHandler {
                     target: null
-                    onActiveChanged: if (active){
-                                         mainWindow.startSystemResize(Qt.RightEdge | Qt.BottomEdge)
+                    onActiveChanged: if (active) {
+                                         mainWindow.startSystemResize(
+                                                     Qt.RightEdge | Qt.BottomEdge)
                                      }
                 }
                 anchors.bottomMargin: 0
@@ -545,9 +651,11 @@ Window {
             anchors.topMargin: 10
             cursorShape: Qt.SizeHorCursor
 
-            DragHandler{
+            DragHandler {
                 target: null
-                onActiveChanged: if (active) { mainWindow.startSystemResize(Qt.LeftEdge) }
+                onActiveChanged: if (active) {
+                                     mainWindow.startSystemResize(Qt.LeftEdge)
+                                 }
             }
         }
 
@@ -565,9 +673,11 @@ Window {
             anchors.topMargin: 35
             cursorShape: Qt.SizeHorCursor
 
-            DragHandler{
+            DragHandler {
                 target: null
-                onActiveChanged: if (active) { mainWindow.startSystemResize(Qt.RightEdge) }
+                onActiveChanged: if (active) {
+                                     mainWindow.startSystemResize(Qt.RightEdge)
+                                 }
             }
         }
 
@@ -584,11 +694,12 @@ Window {
             anchors.bottomMargin: -6
             cursorShape: Qt.SizeVerCursor
 
-            DragHandler{
+            DragHandler {
                 target: null
-                onActiveChanged: if (active) { mainWindow.startSystemResize(Qt.BottomEdge) }
+                onActiveChanged: if (active) {
+                                     mainWindow.startSystemResize(Qt.BottomEdge)
+                                 }
             }
         }
     }
-
 }

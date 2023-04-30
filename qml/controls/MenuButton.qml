@@ -6,7 +6,7 @@ Button {
     id: menutbutton
 
     // Custom Properties
-    property color colorDefault:   "#1d1d2b"
+    property color colorDefault:   "#91aac3"
     property color colorMouseOver: "#40405f"
     property color colorTextBtn: "black"
     property color colorPressed: "#55aaff"
