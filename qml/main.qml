@@ -568,8 +568,7 @@ Window {
                     MenuButton {
                         id: openButton
                         text: "Open"
-                        colorDefault: "transparent"
-                        borderColor: "#636394"
+
                         anchors.top: image.bottom
                         anchors.topMargin: 0
                         anchors.horizontalCenter: parent.horizontalCenter
