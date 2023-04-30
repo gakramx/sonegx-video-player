@@ -5,11 +5,11 @@ Button{
         id: menubutton
         // CUSTOM PROPERTIES
         property url btnIconSource: "../../images/svg_images/settings_icon.svg"
-        property color btnColorDefault: "#33334c"
+        property color btnColorDefault: "#1b2631"
         property color btnColorMouseOver: "#40405f"
         property color btnColorClicked: "#55aaff"
         property color btnColorOverlay: "#ffffff"
-
+        property color borderColor: "#40405f"
         property int btnRadius: 10
 
         QtObject{
@@ -26,14 +26,13 @@ Button{
 
         width: 64
         height: 64
-
         background: Rectangle{
             id: bgBtn
             color: internal.dynamicColor
             radius: btnRadius
             anchors.fill: parent
             anchors.margins: 3
-
+border.color:borderColor
             Image {
                 id: iconBtn
                 source: btnIconSource
