@@ -12,7 +12,8 @@ Button {
     property color btnColorOverlay: "#ffffff"
     property color borderColor: "#40405f"
     property int btnRadius: 10
-
+   property int iconWdth : 32
+   property int iconHeight: 32
     QtObject {
         id: internal
 
@@ -36,8 +37,8 @@ Button {
         Image {
             id: iconBtn
             source: btnIconSource
-            sourceSize.height: 22
-            sourceSize.width: 22
+            sourceSize.height: iconHeight
+            sourceSize.width: iconWdth
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
             visible: false

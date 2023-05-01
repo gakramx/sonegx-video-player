@@ -16,7 +16,6 @@ Window {
     title: qsTr("Dapp")
     visible: true
     color: "#00000000"
-    property alias volumeLabel: volumeLabel
     minimumHeight: 500
     minimumWidth: 800
     property int windowStatus: 0
@@ -217,11 +216,9 @@ Window {
                                    }
                         onDoubleClicked: {
                             if (player.playbackState == MediaPlayer.PlayingState) {
-                                playBtn.btnIconSource = "qrc:/images/icons/cil-media-play.svg"
                                 player.pause()
                                 animationOpenMenu.start()
                             } else {
-                                playBtn.btnIconSource = "qrc:/images/icons/cil-media-pause.svg"
                                 player.play()
                                 animationCloseMenu.start()
                             }
@@ -275,7 +272,7 @@ Window {
                 Rectangle {
                     id: playerMenu
                     y: 597
-                    height: 140
+                    height: 160
                     opacity: 1
                     color: "#e41b2631"
                     //  z: 1
@@ -292,7 +289,7 @@ Window {
                         target: playerMenu
                         property: "height"
                         running: false
-                        to: 140
+                        to: 150
                         duration: 200
                         easing.type: Easing.Linear
                     }
@@ -331,7 +328,7 @@ Window {
                         anchors.top: progressSlider.bottom
                         anchors.bottom: parent.bottom
                         anchors.bottomMargin: 0
-                        anchors.topMargin: 5
+                        anchors.topMargin: 6
                         anchors.rightMargin: 5
                         anchors.leftMargin: 5
 
@@ -358,6 +355,8 @@ Window {
                                                                 ) : timeranimationMenu.restart()
                                 onClicked: player.updatePlaybackRate(
                                                -0.1) // decrease the playback rate by 0.1
+                                btnIconSource: "qrc:/images/icons/cil-chevron-double-left.svg"
+
                             }
 
                             MenuButton {
@@ -368,17 +367,18 @@ Window {
                                 onHoveredChanged: hovered ? timeranimationMenu.stop(
                                                                 ) : timeranimationMenu.restart()
                                 btnIconSource: "qrc:/images/icons/cil-media-play.svg"
+                                iconWdth:64
+                                iconHeight: 64
                                 onClicked: {
                                     if (player.playbackState == MediaPlayer.PlayingState) {
                                         player.pause()
-                                        playBtn.btnIconSource
-                                                = "qrc:/images/icons/cil-media-play.svg"
+
                                     } else {
                                         player.play()
-                                        playBtn.btnIconSource
-                                                = "qrc:/images/icons/cil-media-pause.svg"
+
                                     }
                                 }
+
                             }
                             MenuButton {
                                 id: increaseSpeed
@@ -387,6 +387,8 @@ Window {
                                                                 ) : timeranimationMenu.restart()
                                 onClicked: player.updatePlaybackRate(
                                                0.1) // increase the playback rate by 0.1
+                                btnIconSource: "qrc:/images/icons/cil-chevron-double-right.svg"
+
                             }
                         }
 
@@ -444,19 +446,28 @@ Window {
                             bottomPadding: 2
                             z: 1
                             rightPadding: 2
-                            layoutDirection: Qt.LeftToRight
+                            layoutDirection: Qt.RightToLeft
+
+
+                            MenuButton {
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
 
                             MenuButton {
                                 id: switchFillMode
 
                                 anchors.verticalCenter: parent.verticalCenter
                                 onClicked: player.switchFillMode()
+                                btnIconSource: "qrc:/images/icons/cil-flip-to-front.svg"
                             }
 
                             MenuButton {
+                                id:fullscrenButton
                                 anchors.verticalCenter: parent.verticalCenter
+                                btnIconSource: "qrc:/images/icons/cil-fullscreen.svg"
                                 onClicked: {
                                     if (content.parent == appContainer) {
+                                        fullscrenButton.btnIconSource= "qrc:/images/icons/cil-fullscreen-exit.svg"
                                         // Go fullscreen
                                         appContainer.visible = false
                                         content.parent = bg
@@ -467,6 +478,7 @@ Window {
                                         mainWindow.visibility = "FullScreen"
                                         console.log("appContainer " + appContainer.parent)
                                     } else {
+                                        fullscrenButton.btnIconSource= "qrc:/images/icons/cil-fullscreen.svg"
                                         // Restore normal size
                                         mainWindow.visibility = "Windowed"
                                         content.parent = appContainer
@@ -486,27 +498,6 @@ Window {
                                                                 ) : timeranimationMenu.restart()
                             }
 
-                            MenuButton {
-                                anchors.verticalCenter: parent.verticalCenter
-                                onClicked: {
-                                    if (player.playbackState == MediaPlayer.PlayingState) {
-                                        player.pause()
-                                        playBtn.btnIconSource
-                                                = "qrc:/images/icons/cil-media-play.svg"
-                                    } else {
-                                        player.play()
-                                        playBtn.btnIconSource
-                                                = "qrc:/images/icons/cil-media-pause.svg"
-                                    }
-                                }
-                                btnIconSource: "qrc:/images/icons/cil-media-play.svg"
-                                onHoveredChanged: hovered ? timeranimationMenu.stop(
-                                                                ) : timeranimationMenu.restart()
-                            }
-
-                            MenuButton {
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
 
                             spacing: 4
                             leftPadding: 2
@@ -610,7 +601,7 @@ Window {
                         anchors.top: parent.top
                         horizontalAlignment: Text.AlignLeft
                         anchors.rightMargin: 5
-                        anchors.topMargin: 5
+                        anchors.topMargin: 8
                         font.bold: true
                         font.pointSize: 14
                         color: "white"
@@ -625,7 +616,7 @@ Window {
                     anchors.topMargin: 47
                     anchors.bottom: playerMenu.top
                     clip: true
-                    anchors.bottomMargin: 80
+                    anchors.bottomMargin: 30
 
                     anchors.horizontalCenterOffset: 0
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -637,15 +628,12 @@ Window {
 
                         Image {
                             id: image
-                            width: 256
-                            height: 256
                             horizontalAlignment: Image.AlignHCenter
                             source: "qrc:/images/sonegx_open.svg"
                             sourceSize.height: 256
                             sourceSize.width: 256
-                            anchors.horizontalCenter: parent.horizontalCenter
                             antialiasing: true
-                            fillMode: Image.PreserveAspectFit
+                            //fillMode: Image.PreserveAspectFit
                             //  smooth: true
                             //    mipmap: true
                         }
@@ -653,6 +641,8 @@ Window {
                         MenuButton {
                             id: openButton
                             text: "Open"
+                            anchors.top: image.bottom
+                            anchors.topMargin: 5
 
                             anchors.horizontalCenterOffset: -5
                             anchors.horizontalCenter: parent.horizontalCenter
@@ -671,10 +661,24 @@ Window {
                         }
                     }
                 }
+
+                Rectangle {
+                    id: optionMenu
+                    x: 814
+                    width: 200
+                    color: "#ffffff"
+                    anchors.right: parent.right
+                    anchors.top: player.top
+                    anchors.bottom: playerMenu.top
+                    anchors.bottomMargin: 10
+
+                    anchors.topMargin: 10
+                    anchors.rightMargin: 0
+                }
             }
             Timer {
                 id: timeranimationMenu
-                interval: 5000
+                interval: 3000
                 running: false
                 repeat: false
                 onTriggered: {
@@ -814,3 +818,5 @@ Window {
         }
     }
 }
+
+
