@@ -5,9 +5,10 @@ import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import QtMultimedia
 import QtQuick.Dialogs
-
+import QtQuick.Controls.Material 2.12
 Window {
-
+    Material.theme: Material.Dark
+    Material.accent: Material.Blue
     flags: Qt.Window | Qt.FramelessWindowHint
     id: mainWindow
     width: 1024
@@ -15,6 +16,7 @@ Window {
     title: qsTr("Dapp")
     visible: true
     color: "#00000000"
+    property alias volumeLabel: volumeLabel
     minimumHeight: 500
     minimumWidth: 800
     property int windowStatus: 0
@@ -273,11 +275,11 @@ Window {
                 Rectangle {
                     id: playerMenu
                     y: 597
-                    height: 180
-                    opacity: 0.7
-                    z: 1
+                    height: 140
+                    opacity: 1
+                    color: "#e41b2631"
+                    //  z: 1
                     clip: true
-                    color: Style.hColor
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
@@ -290,7 +292,7 @@ Window {
                         target: playerMenu
                         property: "height"
                         running: false
-                        to: 200
+                        to: 140
                         duration: 200
                         easing.type: Easing.Linear
                     }
@@ -317,50 +319,26 @@ Window {
                                     && !increaseSpeed.hovered)
                                 timeranimationMenu.restart()
                         }
-                        Slider {
-                            id: volumeSlider
-                            x: 724
-                            width: 200
-                            height: 33
 
-                            anchors.top: parent.top
-                            anchors.right: parent.right
-                            anchors.margins: 20
-                            anchors.rightMargin: 90
-                            anchors.topMargin: 39
-                            // orientation: Qt.Vertical
-                            value: 0.5
-                        }
 
-                        Label {
-                            id: volumeLabel
-                            x: 714
-                            text: Math.floor(volumeSlider.value * 100) + "%"
-                            anchors.right: parent.right
-                            anchors.top: parent.top
-                            anchors.rightMargin: 40
-                            anchors.topMargin: 41
-                            horizontalAlignment: Text.AlignLeft
-                            font.bold: true
-                            font.pointSize: 14
-                        }
+
                     }
 
                     Row {
                         id: toolRow
-                        y: 25
-                        height: 128
                         anchors.left: parent.left
                         anchors.right: parent.right
+                        anchors.top: progressSlider.bottom
                         anchors.bottom: parent.bottom
+                        anchors.bottomMargin: 0
+                        anchors.topMargin: 5
                         anchors.rightMargin: 5
                         anchors.leftMargin: 5
-                        anchors.bottomMargin: 20
 
                         Row {
                             id: rowButtons
-                            width: 300
-                            height: 128
+                            width: 246
+                            height: 0
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
                             anchors.bottom: parent.bottom
@@ -393,10 +371,12 @@ Window {
                                 onClicked: {
                                     if (player.playbackState == MediaPlayer.PlayingState) {
                                         player.pause()
-                                        playBtn.btnIconSource = "qrc:/images/icons/cil-media-play.svg"
+                                        playBtn.btnIconSource
+                                                = "qrc:/images/icons/cil-media-play.svg"
                                     } else {
                                         player.play()
-                                        playBtn.btnIconSource = "qrc:/images/icons/cil-media-pause.svg"
+                                        playBtn.btnIconSource
+                                                = "qrc:/images/icons/cil-media-pause.svg"
                                     }
                                 }
                             }
@@ -408,108 +388,78 @@ Window {
                                 onClicked: player.updatePlaybackRate(
                                                0.1) // increase the playback rate by 0.1
                             }
-
-                            MenuButton {
-                                id: switchFillMode
-                                anchors.verticalCenter: parent.verticalCenter
-                                onClicked: player.switchFillMode()
-                            }
                         }
 
                         Slider {
-                            id: progressSlider
-                            onHoveredChanged: hovered ? timeranimationMenu.stop(
-                                                            ) : timeranimationMenu.restart()
-                            z: 1
-                            enabled: player.seekable
-                            value: player.duration > 0 ? player.position / player.duration : 0
-                            background: Rectangle {
-                                implicitHeight: 8
-                                color: "white"
-                                radius: 3
-                                Rectangle {
-                                    width: progressSlider.visualPosition * parent.width
-                                    height: parent.height
-                                    color: "#1D8BF8"
-                                    radius: 3
-
-                                    Rectangle {
-                                        id: myreact
-                                        width: 5
-                                        height: parent.height
-                                        color: "red"
-                                        visible: true
-                                    }
-                                }
-                            }
-                            handle: Item {}
-
-                            onMoved: function () {
-                                player.position = player.duration * progressSlider.position
-                            }
-                            property var targetTime: "00:22:10"
+                            id: volumeSlider
+                            width: 150
+                            height:  20
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: rowButtons.right
-                            anchors.right: timeLabel.left
                             anchors.leftMargin: 5
-                            anchors.verticalCenterOffset: 0
-                            anchors.rightMargin: 5
 
-                            function timeToMilliseconds(time) {
-                                var timeParts = time.split(":")
-                                var hours = parseInt(timeParts[0])
-                                var minutes = parseInt(timeParts[1])
-                                var seconds = parseInt(timeParts[2])
-                                return (hours * 60 * 60 + minutes * 60 + seconds) * 1000
+
+
+                            //     anchors.margins: 20
+                            //   orientation: Qt.Vertical
+                            PropertyAnimation {
+                                id: animationOpenvolumeSlider
+                                target: volumeSlider
+                                property: "height"
+                                running: false
+                                to: 150
+                                duration: 200
+                                easing.type: Easing.Linear
                             }
-
-                            function positionRedRectangle() {
-                                var targetPosition = timeToMilliseconds(
-                                            targetTime) / player.duration
-
-                                myreact.x = targetPosition * progressSlider.width
+                            PropertyAnimation {
+                                id: animationClosevolumeSlider
+                                target: volumeSlider
+                                property: "height"
+                                running: false
+                                to: 0
+                                duration: 200
+                                easing.type: Easing.Linear
                             }
-
-                            Component.onCompleted: {
-
-                                //   positionRedRectangle();
-                            }
+                            value: 0.5
                         }
 
                         Label {
-                            id: timeLabel
-                            text: internal.msToTimeString(
-                                      player.position)
+                            id: volumeLabel
+                            text: Math.floor(volumeSlider.value * 100) + "%"
                             anchors.verticalCenter: parent.verticalCenter
-                            anchors.right: rowButtons1.left
+                            anchors.left: volumeSlider.right
                             horizontalAlignment: Text.AlignLeft
-                            anchors.verticalCenterOffset: 0
-                            anchors.rightMargin: 0
+                            anchors.leftMargin: 10
                             font.bold: true
                             font.pointSize: 14
-                            color:"white"
                         }
 
                         Row {
                             id: rowButtons1
-                            width: 136
-                            height: 67
+                            width: 270
+                            height: 60
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.right: parent.right
-                            anchors.bottom: parent.bottom
+                            anchors.rightMargin: 15
                             bottomPadding: 2
                             z: 1
                             rightPadding: 2
-                            anchors.rightMargin: 15
                             layoutDirection: Qt.LeftToRight
+
+                            MenuButton {
+                                id: switchFillMode
+
+                                anchors.verticalCenter: parent.verticalCenter
+                                onClicked: player.switchFillMode()
+                            }
+
                             MenuButton {
                                 anchors.verticalCenter: parent.verticalCenter
                                 onClicked: {
-                                    if (content.parent === appContainer) {
+                                    if (content.parent == appContainer) {
                                         // Go fullscreen
                                         appContainer.visible = false
                                         content.parent = bg
-
                                         content.anchors.topMargin = 0
                                         content.anchors.rightMargin = 0
                                         content.anchors.leftMargin = 0
@@ -541,69 +491,184 @@ Window {
                                 onClicked: {
                                     if (player.playbackState == MediaPlayer.PlayingState) {
                                         player.pause()
-                                        playBtn.btnIconSource = "qrc:/images/icons/cil-media-play.svg"
+                                        playBtn.btnIconSource
+                                                = "qrc:/images/icons/cil-media-play.svg"
                                     } else {
                                         player.play()
-                                        playBtn.btnIconSource = "qrc:/images/icons/cil-media-pause.svg"
+                                        playBtn.btnIconSource
+                                                = "qrc:/images/icons/cil-media-pause.svg"
                                     }
                                 }
                                 btnIconSource: "qrc:/images/icons/cil-media-play.svg"
                                 onHoveredChanged: hovered ? timeranimationMenu.stop(
                                                                 ) : timeranimationMenu.restart()
                             }
-                            anchors.bottomMargin: 0
+
+                            MenuButton {
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+
                             spacing: 4
                             leftPadding: 2
                             topPadding: 2
                         }
 
+
+
+                    }
+
+                    Slider {
+                        id: progressSlider
+                        onHoveredChanged: hovered ? timeranimationMenu.stop(
+                                                        ) : timeranimationMenu.restart()
+                        z: 1
+                        enabled: player.seekable
+                        value: player.duration > 0 ? player.position / player.duration : 0
+                        background: Rectangle {
+                            implicitHeight: 4
+                            color: "white"
+                            radius: 3
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: progressSlider.availableWidth
+                            height: implicitHeight
+                            x: progressSlider.leftPadding
+
+
+                            /*
+                            anchors.top: parent.top
+                            anchors.topMargin: 0*/
+                            Rectangle {
+                                id: progressSliderRect
+                                width: progressSlider.visualPosition * parent.width
+                                height: parent.height
+                                color: "#1D8BF8"
+                                radius: 3
+
+                                Rectangle {
+                                    id: myreact
+                                    width: 5
+                                    height: parent.height
+                                    color: "red"
+                                    visible: true
+                                }
+                            }
+                        }
+                        //handle: Item {}
+                        handle: Rectangle {
+                            //   x: progressSliderRect.width - 6
+                            x: progressSlider.leftPadding + progressSlider.visualPosition
+                               * (progressSlider.availableWidth - width)
+                            y: progressSlider.topPadding
+                               + progressSlider.availableHeight / 2 - height / 2
+                            implicitWidth: 26
+                            implicitHeight: 26
+                            radius: 13
+                            color: progressSlider.pressed ? "#1b2631" : "#f6f6f6"
+                            border.color: "#bdbebf"
+
+                            antialiasing: true
+                        }
+                        onMoved: function () {
+                            player.position = player.duration * progressSlider.position
+                        }
+                        property var targetTime: "00:22:10"
+                        anchors.left: parent.left
+                        anchors.right: timeLabel.left
+                        anchors.top: parent.top
+                        anchors.rightMargin: 2
+                        anchors.topMargin: 5
+                        anchors.leftMargin: 20
+
+                        function timeToMilliseconds(time) {
+                            var timeParts = time.split(":")
+                            var hours = parseInt(timeParts[0])
+                            var minutes = parseInt(timeParts[1])
+                            var seconds = parseInt(timeParts[2])
+                            return (hours * 60 * 60 + minutes * 60 + seconds) * 1000
+                        }
+
+                        function positionRedRectangle() {
+                            var targetPosition = timeToMilliseconds(
+                                        targetTime) / player.duration
+
+                            myreact.x = targetPosition * progressSlider.width
+                        }
+
+                        Component.onCompleted: {
+
+                            //   positionRedRectangle();
+                        }
+                    }
+
+                    Label {
+                        id: timeLabel
+                        x: 810
+                        width: 81
+                        height: 26
+                        text: internal.msToTimeString(player.position)
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        horizontalAlignment: Text.AlignLeft
+                        anchors.rightMargin: 5
+                        anchors.topMargin: 5
+                        font.bold: true
+                        font.pointSize: 14
+                        color: "white"
                     }
                 }
 
                 Rectangle {
                     id: openArea
-                    y: 23
-                    width: 256
-                    height: 319
+                    width: 308
                     color: "transparent"
-                    anchors.verticalCenter: parent.verticalCenter
-                    antialiasing: true
+                    anchors.top: parent.top
+                    anchors.topMargin: 47
+                    anchors.bottom: playerMenu.top
+                    clip: true
+                    anchors.bottomMargin: 80
+
+                    anchors.horizontalCenterOffset: 0
                     anchors.horizontalCenter: parent.horizontalCenter
+                    antialiasing: true
 
-                    Image {
-                        id: image
-                        width: 256
-                        height: 256
-                        anchors.top: parent.top
-                        horizontalAlignment: Image.AlignHCenter
-                        source: "qrc:/images/sonegx_open.png"
-                        sourceSize.height: 256
-                        sourceSize.width: 256
-                        anchors.topMargin: 0
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        antialiasing: true
-                        fillMode: Image.PreserveAspectFit
-                    }
+                    Column {
+                        id: column
+                        anchors.fill: parent
 
-                    MenuButton {
-                        id: openButton
-                        text: "Open"
-
-                        anchors.top: image.bottom
-                        anchors.topMargin: 0
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        contentItem: Text {
-                            color: "#ffffff"
-                            text: "+"
-                            anchors.verticalCenter: parent.verticalCenter
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            font.bold: true
-                            font.pointSize: 29
+                        Image {
+                            id: image
+                            width: 256
+                            height: 256
+                            horizontalAlignment: Image.AlignHCenter
+                            source: "qrc:/images/sonegx_open.svg"
+                            sourceSize.height: 256
+                            sourceSize.width: 256
                             anchors.horizontalCenter: parent.horizontalCenter
-                            //   font: openButton.font
+                            antialiasing: true
+                            fillMode: Image.PreserveAspectFit
+                            //  smooth: true
+                            //    mipmap: true
                         }
-                        onClicked: dlg.visible = true
+
+                        MenuButton {
+                            id: openButton
+                            text: "Open"
+
+                            anchors.horizontalCenterOffset: -5
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            contentItem: Text {
+                                color: "#ffffff"
+                                text: "+"
+                                anchors.verticalCenter: parent.verticalCenter
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                                font.bold: true
+                                font.pointSize: 29
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                //   font: openButton.font
+                            }
+                            onClicked: dlg.visible = true
+                        }
                     }
                 }
             }
@@ -658,6 +723,33 @@ Window {
                 anchors.bottomMargin: 0
                 cursorShape: Qt.SizeFDiagCursor
             }
+            /*
+            Image {
+                id: image1
+                x: -9
+                y: 139
+                width: 512
+                height: 512
+               // horizontalAlignment: Image.AlignHCenter
+                source: "qrc:/images/sonegx_open.svg"
+                fillMode: Image.Stretch
+                cache: false
+                sourceSize.height: 512
+                sourceSize.width: 512
+                autoTransform: false
+                mipmap: false
+                antialiasing: true
+                smooth: false
+
+
+              //  anchors.horizontalCenterOffset: -321
+
+
+
+
+               // anchors.horizontalCenter: parent.horizontalCenter
+
+            }*/
         }
 
         MouseArea {
