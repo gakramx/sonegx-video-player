@@ -5,7 +5,7 @@ import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import QtMultimedia
 import QtQuick.Dialogs
-import QtQuick.Controls.Material 2.12
+import QtQuick.Controls.Material
 Window {
     Material.theme: Material.Dark
     Material.accent: Material.Blue
@@ -87,7 +87,7 @@ Window {
 
     FileDialog {
         id: dlg
-        //    nameFilters: [ "Video files (*.mp4 *.flv *.ts *.mpg *.3gp *.ogv *.m4v *.mov)", "All files (*)" ]
+            nameFilters: [ "Video files (*.mp4 *.flv *.ts *.mpg *.3gp *.ogv *.m4v *.mov)", "All files (*)" ]
         title: "Please choose a video file"
         modality: Qt.WindowModal
         onAccepted: {
@@ -272,7 +272,7 @@ Window {
                 Rectangle {
                     id: playerMenu
                     y: 597
-                    height: 160
+                    height: 140
                     opacity: 1
                     color: "#e41b2631"
                     //  z: 1
@@ -392,15 +392,61 @@ Window {
                             }
                         }
 
+                        Image {
+                            id: volume_icon
+                            width: 32
+                            height: 32
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: rowButtons.right
+                            source: "qrc:/images/icons/cil-volume-high.svg"
+                            anchors.leftMargin: 2
+                            fillMode: Image.PreserveAspectFit
+
+
+
+                        }
+                        ColorOverlay {
+                            anchors.fill: volume_icon
+                            source: volume_icon
+                            color: "white"
+                            antialiasing: true
+                        }
+                        MouseArea{
+                        anchors.fill: volume_icon
+                        onClicked: volumeSlider.mute_umute()
+
+                        }
+
                         Slider {
+                            property  real  tempValue: 0
                             id: volumeSlider
                             width: 150
                             height:  20
                             anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: rowButtons.right
-                            anchors.leftMargin: 5
+                            anchors.left: volume_icon.right
+                            anchors.leftMargin: 2
 
-
+                            onValueChanged: {
+                            if(value==0)
+                                volume_icon.source="qrc:/images/icons/cil-volume-off.svg"
+                            else if (value<=0.5)
+                                volume_icon.source="qrc:/images/icons/cil-volume-low.svg"
+                            else
+                                volume_icon.source="qrc:/images/icons/cil-volume-high.svg"
+                            }
+                            function mute_umute() {
+                                if(value!=0){
+                                tempValue=value
+                                    value=0
+                                }
+                                else if(value==0)
+                                {
+                                if(tempValue==0)
+                                 value=70
+                                else
+                                    value=tempValue
+                                }
+                            }
 
                             //     anchors.margins: 20
                             //   orientation: Qt.Vertical
@@ -422,7 +468,7 @@ Window {
                                 duration: 200
                                 easing.type: Easing.Linear
                             }
-                            value: 0.5
+                            value: 1
                         }
 
                         Label {
@@ -451,6 +497,18 @@ Window {
 
                             MenuButton {
                                 anchors.verticalCenter: parent.verticalCenter
+                                btnIconSource: "qrc:/images/icons/cil-menu.svg"
+
+                            onClicked: {
+                            if(optionMenu.width==0){
+                            animationOpenoptionMenu.start()
+                                }
+                            else{
+                                animationCloseoptionMenu.start()
+                                }
+
+
+                            }
                             }
 
                             MenuButton {
@@ -503,6 +561,7 @@ Window {
                             leftPadding: 2
                             topPadding: 2
                         }
+
 
 
 
@@ -612,6 +671,7 @@ Window {
                     id: openArea
                     width: 308
                     color: "transparent"
+                   //   color: "white"
                     anchors.top: parent.top
                     anchors.topMargin: 47
                     anchors.bottom: playerMenu.top
@@ -628,14 +688,18 @@ Window {
 
                         Image {
                             id: image
-                            horizontalAlignment: Image.AlignHCenter
-                            source: "qrc:/images/sonegx_open.svg"
+
+
+                            source: "qrc:/images/sonegx_open.png"
+                            anchors.horizontalCenter: parent.horizontalCenter
+
+
                             sourceSize.height: 256
                             sourceSize.width: 256
                             antialiasing: true
                             //fillMode: Image.PreserveAspectFit
-                            //  smooth: true
-                            //    mipmap: true
+                              smooth: true
+                                mipmap: true
                         }
 
                         MenuButton {
@@ -649,12 +713,11 @@ Window {
                             contentItem: Text {
                                 color: "#ffffff"
                                 text: "+"
-                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.fill: parent
                                 horizontalAlignment: Text.AlignHCenter
                                 verticalAlignment: Text.AlignVCenter
                                 font.bold: true
                                 font.pointSize: 29
-                                anchors.horizontalCenter: parent.horizontalCenter
                                 //   font: openButton.font
                             }
                             onClicked: dlg.visible = true
@@ -665,15 +728,78 @@ Window {
                 Rectangle {
                     id: optionMenu
                     x: 814
-                    width: 200
-                    color: "#ffffff"
+                    width:  0
+                      color: "#e41b2631"
                     anchors.right: parent.right
                     anchors.top: player.top
                     anchors.bottom: playerMenu.top
                     anchors.bottomMargin: 10
-
+                    clip:true
                     anchors.topMargin: 10
                     anchors.rightMargin: 0
+
+                    PropertyAnimation {
+                        id: animationOpenoptionMenu
+                        target: optionMenu
+                        property: "width"
+                        running: false
+                        to: player.width/4
+                        duration: 200
+                        easing.type: Easing.Linear
+                    }
+                    PropertyAnimation {
+                        id: animationCloseoptionMenu
+                        target: optionMenu
+                        property: "width"
+                        running: false
+                        to: 0
+                        duration: 200
+                        easing.type: Easing.Linear
+                    }
+
+                    ListModel {
+                        id:contactMdl
+                        ListElement {
+                            name: "Course 1"
+                            number: "00:22:44"
+                        }
+                        ListElement {
+                            name: "Course 2"
+                            number: "00:26:04"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                    }
+                    Component {
+                          id: contactDelegate
+
+                          Item {
+                                  width: 180; height: 40
+                                  Column {
+                                      spacing: 3
+                                      Text { text: '<b>Name : </b> ' + name ; color:"white" }
+                                      Text { text: '<b>Number : </b> ' + number ; color:"white"  }
+                                  }
+                              }
+
+
+                      }
+
+                    ListView {
+                        anchors.fill: parent
+                        anchors.rightMargin: 2
+                        anchors.leftMargin: 2
+                        anchors.bottomMargin: 2
+                        anchors.topMargin: 2
+                                z: 0
+
+                        model: contactMdl
+                        delegate:contactDelegate
+        highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
+                    }
+
                 }
             }
             Timer {
@@ -706,6 +832,18 @@ Window {
                         onActiveChanged: if (active) {
                                              mainWindow.startSystemMove()
                                          }
+                    }
+
+                    Label {
+                        id: label
+                        color:"white"
+                        text: qsTr("Sonegx player")
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: 0
+                        anchors.topMargin: 4
+                        font.pointSize: 13
+                        anchors.horizontalCenter: parent.horizontalCenter
                     }
                 }
             }
