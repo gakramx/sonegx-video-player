@@ -87,30 +87,56 @@ Window {
 
 
     }
-     QtObject {
-     id:json
-     function getVideoName(file)
-     {
-         var data =  file.read()
+    QtObject {
+        id:json
+        property string videoName
+        property var timeLines:[]
 
-         return JSON.stringify(data.fvideo)
-     }
-     function getTimeline(file)
-     {
-         var data =  file.read()
-          var timelines = [];
- //data.timeline[0].show_time
-         for(var i=0;i<data.timeline.length;i++)
-         {
+        function getVideoName(file)
+        {
+            var data =  file.read()
+            //  videoName=JSON.stringify(data.fvideo)
+            videoName=data.fvideo
+            return JSON.stringify(data.fvideo)
+        }
+        function getTimeline(file)
+        {
+            var data =  file.read()
+            var timelines = [];
+            //data.timeline[0].show_time
+            for(var i=0;i<data.timeline.length;i++)
+            {
                 timelines.push(data.timeline[i].show_time)
-           //  console.log(data.timeline[i].show_time)
-         }
-         return timelines
-     }
-     }
+                //  console.log(data.timeline[i].show_time)
+            }
+            timeLines=timelines
+            return timelines
+        }
+        function printRecation(player){
+
+            var position = internal.msToTimeString(player.position)
+
+            for(var i=0;i<timeLines.length;i++)
+            {
+
+                if(position==timeLines[i])
+                    console.log("Works -------------------------------------------- "+position )
+            }
+
+        }
+    }
 
     JsonFile {
         id: jsfile
+    }
+
+    Timer {
+        interval: 1000 // 1 second
+        repeat: true
+        running: player.playbackState === MediaPlayer.PlayingState
+        onTriggered: {
+            json.printRecation(player)
+        }
     }
     FileDialog {
         id: dlg
@@ -125,8 +151,13 @@ Window {
             jsfile.name = dlg.currentFile
 
             //var data =  jsfile.read()
-          //  var store = JSON.stringify(jsfile.read())
-           // console.log("Folder: " +dlg.currentFolder)
+            //  var store = JSON.stringify(jsfile.read())
+            // console.log("Folder: " +dlg.currentFolder)
+            json.getVideoName(jsfile)
+            var fullVideoPath = dlg.currentFolder+"/"+json.videoName
+            json.getTimeline(jsfile)
+            console.log(fullVideoPath)
+            player.source=fullVideoPath
             var timeList = json.getTimeline(jsfile)
             console.log("JSON: " + timeList[2])
             return
@@ -225,6 +256,7 @@ Window {
                     volume: volumeSlider.value
                     playbackRate: 1.0
                     fillMode: VideoOutput.Stretch
+
                     MouseArea {
                         id: iMouseArea
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
