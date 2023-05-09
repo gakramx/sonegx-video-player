@@ -6,6 +6,7 @@ import Qt5Compat.GraphicalEffects
 import QtMultimedia
 import QtQuick.Dialogs
 import QtQuick.Controls.Material
+import JsonFile
 Window {
     Material.theme: Material.Dark
     Material.accent: Material.Blue
@@ -83,18 +84,51 @@ Window {
         function toMilliseconds(hrs, min, sec) {
             return (hrs * 60 * 60 + min * 60 + sec) * 1000
         }
-    }
 
+
+    }
+     QtObject {
+     id:json
+     function getVideoName(file)
+     {
+         var data =  file.read()
+
+         return JSON.stringify(data.fvideo)
+     }
+     function getTimeline(file)
+     {
+         var data =  file.read()
+          var timelines = [];
+ //data.timeline[0].show_time
+         for(var i=0;i<data.timeline.length;i++)
+         {
+                timelines.push(data.timeline[i].show_time)
+           //  console.log(data.timeline[i].show_time)
+         }
+         return timelines
+     }
+     }
+
+    JsonFile {
+        id: jsfile
+    }
     FileDialog {
         id: dlg
-            nameFilters: [ "Video files (*.mp4 *.flv *.ts *.mpg *.3gp *.ogv *.m4v *.mov)", "All files (*)" ]
+        //  nameFilters: [ "Video files (*.mp4 *.flv *.ts *.mpg *.3gp *.ogv *.m4v *.mov)", "All files (*)" ]
         title: "Please choose a video file"
         modality: Qt.WindowModal
         onAccepted: {
             console.log("You chose: " + dlg.currentFile)
             openArea.visible = false
-            player.source = dlg.currentFile
-            player.play()
+            // player.source = dlg.currentFile
+            // player.play()
+            jsfile.name = dlg.currentFile
+
+            //var data =  jsfile.read()
+          //  var store = JSON.stringify(jsfile.read())
+           // console.log("Folder: " +dlg.currentFolder)
+            var timeList = json.getTimeline(jsfile)
+            console.log("JSON: " + timeList[2])
             return
         }
         onRejected: {
@@ -272,7 +306,7 @@ Window {
                 Rectangle {
                     id: playerMenu
                     y: 597
-                    height: 140
+                    height: 0
                     opacity: 1
                     color: "#e41b2631"
                     //  z: 1
@@ -412,8 +446,8 @@ Window {
                             antialiasing: true
                         }
                         MouseArea{
-                        anchors.fill: volume_icon
-                        onClicked: volumeSlider.mute_umute()
+                            anchors.fill: volume_icon
+                            onClicked: volumeSlider.mute_umute()
 
                         }
 
@@ -427,24 +461,24 @@ Window {
                             anchors.leftMargin: 2
 
                             onValueChanged: {
-                            if(value==0)
-                                volume_icon.source="qrc:/images/icons/cil-volume-off.svg"
-                            else if (value<=0.5)
-                                volume_icon.source="qrc:/images/icons/cil-volume-low.svg"
-                            else
-                                volume_icon.source="qrc:/images/icons/cil-volume-high.svg"
+                                if(value==0)
+                                    volume_icon.source="qrc:/images/icons/cil-volume-off.svg"
+                                else if (value<=0.5)
+                                    volume_icon.source="qrc:/images/icons/cil-volume-low.svg"
+                                else
+                                    volume_icon.source="qrc:/images/icons/cil-volume-high.svg"
                             }
                             function mute_umute() {
                                 if(value!=0){
-                                tempValue=value
+                                    tempValue=value
                                     value=0
                                 }
                                 else if(value==0)
                                 {
-                                if(tempValue==0)
-                                 value=70
-                                else
-                                    value=tempValue
+                                    if(tempValue==0)
+                                        value=70
+                                    else
+                                        value=tempValue
                                 }
                             }
 
@@ -499,16 +533,16 @@ Window {
                                 anchors.verticalCenter: parent.verticalCenter
                                 btnIconSource: "qrc:/images/icons/cil-menu.svg"
 
-                            onClicked: {
-                            if(optionMenu.width==0){
-                            animationOpenoptionMenu.start()
-                                }
-                            else{
-                                animationCloseoptionMenu.start()
-                                }
+                                onClicked: {
+                                    if(optionMenu.width==0){
+                                        animationOpenoptionMenu.start()
+                                    }
+                                    else{
+                                        animationCloseoptionMenu.start()
+                                    }
 
 
-                            }
+                                }
                             }
 
                             MenuButton {
@@ -671,7 +705,7 @@ Window {
                     id: openArea
                     width: 308
                     color: "transparent"
-                   //   color: "white"
+                    //   color: "white"
                     anchors.top: parent.top
                     anchors.topMargin: 47
                     anchors.bottom: playerMenu.top
@@ -698,8 +732,8 @@ Window {
                             sourceSize.width: 256
                             antialiasing: true
                             //fillMode: Image.PreserveAspectFit
-                              smooth: true
-                                mipmap: true
+                            smooth: true
+                            mipmap: true
                         }
 
                         MenuButton {
@@ -729,7 +763,7 @@ Window {
                     id: optionMenu
                     x: 814
                     width:  0
-                      color: "#e41b2631"
+                    color: "#e41b2631"
                     anchors.right: parent.right
                     anchors.top: player.top
                     anchors.bottom: playerMenu.top
@@ -773,19 +807,19 @@ Window {
                         }
                     }
                     Component {
-                          id: contactDelegate
+                        id: contactDelegate
 
-                          Item {
-                                  width: 180; height: 40
-                                  Column {
-                                      spacing: 3
-                                      Text { text: '<b>Name : </b> ' + name ; color:"white" }
-                                      Text { text: '<b>Number : </b> ' + number ; color:"white"  }
-                                  }
-                              }
+                        Item {
+                            width: 180; height: 40
+                            Column {
+                                spacing: 3
+                                Text { text: '<b>Name : </b> ' + name ; color:"white" }
+                                Text { text: '<b>Number : </b> ' + number ; color:"white"  }
+                            }
+                        }
 
 
-                      }
+                    }
 
                     ListView {
                         anchors.fill: parent
@@ -793,11 +827,11 @@ Window {
                         anchors.leftMargin: 2
                         anchors.bottomMargin: 2
                         anchors.topMargin: 2
-                                z: 0
+                        z: 0
 
                         model: contactMdl
                         delegate:contactDelegate
-        highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
+                        highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
                     }
 
                 }

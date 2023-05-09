@@ -13,6 +13,8 @@ qt_add_resources(IMAGESRC images.qrc
 )
 qt_add_executable(appDapp
     main.cpp
+    jsonfile.cpp
+    jsonfile.h
      ${QMLRC}
      ${IMAGESRC}
 )
