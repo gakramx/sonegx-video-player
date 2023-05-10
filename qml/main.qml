@@ -84,14 +84,23 @@ Window {
         function toMilliseconds(hrs, min, sec) {
             return (hrs * 60 * 60 + min * 60 + sec) * 1000
         }
+        function timeToMilliseconds(time) {
+            var timeParts = time.split(":")
+            var hours = parseInt(timeParts[0])
+            var minutes = parseInt(timeParts[1])
+            var seconds = parseInt(timeParts[2])
+            return (hours * 60 * 60 + minutes * 60 + seconds) * 1000
+        }
+
 
 
     }
+
     QtObject {
         id:json
         property string videoName
         property var timeLines:[]
-
+        property var proRectangles:[]
         function getVideoName(file)
         {
             var data =  file.read()
@@ -112,17 +121,51 @@ Window {
             timeLines=timelines
             return timelines
         }
-        function printRecation(player){
+        function printRecation(player,file){
 
             var position = internal.msToTimeString(player.position)
-
+            var data=file.read()
             for(var i=0;i<timeLines.length;i++)
             {
 
                 if(position==timeLines[i])
-                    console.log("Works -------------------------------------------- "+position )
+                    console.log("Works -------------------------------------------- "+ data.timeline[i].msg_text )
             }
 
+        }
+        function printRectangleSlider(file,parentComponent){
+
+            if(proRectangles==0){
+                 console.log("Work  " )
+                var component;
+                var sprite;
+                var positionRec;
+                for (var i = 0; i < timeLines.length; i++) {
+                    console.log("Create  " + timeLines[i])
+                    positionRec =  positionRedRectangle(timeLines[i])
+                      console.log("Create positsion   " + positionRec )
+                    component = Qt.createComponent("qrc:/qml/controls/PRec.qml");
+                    sprite = component.createObject(parentComponent, {"x": positionRec});
+                    proRectangles.push(sprite)
+                }
+            }
+            else if (timeLines!=0 && proRectangles!=0){
+
+                for (var i = 0; i < proRectangles.length; i++) {
+
+                        console.log("Resize  " + timeLines[i])
+                       positionRec =  positionRedRectangle(timeLines[i])
+                    console.log("Resize positsion  " + positionRec )
+                    proRectangles[i].x=positionRec-i
+                }
+
+            }
+        }
+
+        function positionRedRectangle(targetTime) {
+            var targetPosition = internal.timeToMilliseconds(
+                        targetTime) / player.duration
+            return targetPosition * progressRect.width
         }
     }
 
@@ -135,7 +178,7 @@ Window {
         repeat: true
         running: player.playbackState === MediaPlayer.PlayingState
         onTriggered: {
-            json.printRecation(player)
+            json.printRecation(player,jsfile)
         }
     }
     FileDialog {
@@ -156,10 +199,9 @@ Window {
             json.getVideoName(jsfile)
             var fullVideoPath = dlg.currentFolder+"/"+json.videoName
             json.getTimeline(jsfile)
-            console.log(fullVideoPath)
             player.source=fullVideoPath
+
             var timeList = json.getTimeline(jsfile)
-            console.log("JSON: " + timeList[2])
             return
         }
         onRejected: {
@@ -256,7 +298,10 @@ Window {
                     volume: volumeSlider.value
                     playbackRate: 1.0
                     fillMode: VideoOutput.Stretch
+                    onSourceChanged: {
+                        json.printRectangleSlider(jsfile,progressRect)
 
+                    }
                     MouseArea {
                         id: iMouseArea
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -325,9 +370,10 @@ Window {
                             player.fillMode = VideoOutput.Stretch
                         }
                     }
+
                     onPlaybackStateChanged: {
                         if (playbackState == MediaPlayer.PlayingState) {
-                            progressSlider.positionRedRectangle()
+                            // progressSlider.positionRedRectangle()
 
                             playBtn.btnIconSource = "qrc:/images/icons/cil-media-pause.svg"
                         } else {
@@ -338,7 +384,7 @@ Window {
                 Rectangle {
                     id: playerMenu
                     y: 597
-                    height: 0
+                    height: 140
                     opacity: 1
                     color: "#e41b2631"
                     //  z: 1
@@ -391,10 +437,10 @@ Window {
                         id: toolRow
                         anchors.left: parent.left
                         anchors.right: parent.right
-                        anchors.top: progressSlider.bottom
+                        anchors.top: timeLabel.bottom
                         anchors.bottom: parent.bottom
                         anchors.bottomMargin: 0
-                        anchors.topMargin: 6
+                        anchors.topMargin: 1
                         anchors.rightMargin: 5
                         anchors.leftMargin: 5
 
@@ -640,7 +686,15 @@ Window {
                         z: 1
                         enabled: player.seekable
                         value: player.duration > 0 ? player.position / player.duration : 0
+                        onWidthChanged: {
+                        json.printRectangleSlider(jsfile,progressRect)
+
+                        }
+                        onHeightChanged: {
+                            json.printRectangleSlider(jsfile,progressRect)
+                        }
                         background: Rectangle {
+                              id: progressRect
                             implicitHeight: 4
                             color: "white"
                             radius: 3
@@ -659,14 +713,6 @@ Window {
                                 height: parent.height
                                 color: "#1D8BF8"
                                 radius: 3
-
-                                Rectangle {
-                                    id: myreact
-                                    width: 5
-                                    height: parent.height
-                                    color: "red"
-                                    visible: true
-                                }
                             }
                         }
                         //handle: Item {}
@@ -676,8 +722,8 @@ Window {
                                * (progressSlider.availableWidth - width)
                             y: progressSlider.topPadding
                                + progressSlider.availableHeight / 2 - height / 2
-                            implicitWidth: 26
-                            implicitHeight: 26
+                            implicitWidth: 12
+                            implicitHeight: 12
                             radius: 13
                             color: progressSlider.pressed ? "#1b2631" : "#f6f6f6"
                             border.color: "#bdbebf"
@@ -687,32 +733,18 @@ Window {
                         onMoved: function () {
                             player.position = player.duration * progressSlider.position
                         }
-                        property var targetTime: "00:22:10"
+
                         anchors.left: parent.left
-                        anchors.right: timeLabel.left
+                        anchors.right: parent.right
                         anchors.top: parent.top
-                        anchors.rightMargin: 2
+                        anchors.rightMargin: 20
                         anchors.topMargin: 5
                         anchors.leftMargin: 20
-
-                        function timeToMilliseconds(time) {
-                            var timeParts = time.split(":")
-                            var hours = parseInt(timeParts[0])
-                            var minutes = parseInt(timeParts[1])
-                            var seconds = parseInt(timeParts[2])
-                            return (hours * 60 * 60 + minutes * 60 + seconds) * 1000
-                        }
-
-                        function positionRedRectangle() {
-                            var targetPosition = timeToMilliseconds(
-                                        targetTime) / player.duration
-
-                            myreact.x = targetPosition * progressSlider.width
-                        }
+                        //
 
                         Component.onCompleted: {
 
-                            //   positionRedRectangle();
+                            //    positionRedRectangle("00:22:10");
                         }
                     }
 
@@ -723,10 +755,10 @@ Window {
                         height: 26
                         text: internal.msToTimeString(player.position)
                         anchors.right: parent.right
-                        anchors.top: parent.top
+                        anchors.top: progressSlider.bottom
                         horizontalAlignment: Text.AlignLeft
                         anchors.rightMargin: 5
-                        anchors.topMargin: 8
+                        anchors.topMargin: 2
                         font.bold: true
                         font.pointSize: 14
                         color: "white"
