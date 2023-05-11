@@ -125,11 +125,16 @@ Window {
 
             var position = internal.msToTimeString(player.position)
             var data=file.read()
+            var component;
+            var sprite;
             for(var i=0;i<timeLines.length;i++)
             {
 
-                if(position==timeLines[i])
+                if(position==timeLines[i]){
+                    component = Qt.createComponent("qrc:/qml/controls/ReactTmp.qml");
+                    sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text});
                     console.log("Works -------------------------------------------- "+ data.timeline[i].msg_text )
+                }
             }
 
         }

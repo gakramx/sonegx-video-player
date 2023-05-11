@@ -11,5 +11,6 @@
         <file>qml/controls/LeftButton.qml</file>
         <file>qml/controls/MenuButton.qml</file>
         <file>qml/controls/PRec.qml</file>
+        <file>qml/controls/ReactTmp.qml</file>
     </qresource>
 </RCC>
