@@ -99,6 +99,7 @@ Window {
     QtObject {
         id:json
         property string videoName
+        property int videoId
         property var timeLines:[]
         property var proRectangles:[]
         function getVideoName(file)
@@ -129,11 +130,12 @@ Window {
             var sprite;
             for(var i=0;i<timeLines.length;i++)
             {
-
                 if(position==timeLines[i]){
+                    player.pause()
                     component = Qt.createComponent("qrc:/qml/controls/ReactTmp.qml");
-                    sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text});
-                    console.log("Works -------------------------------------------- "+ data.timeline[i].msg_text )
+                  //  sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text});
+                    sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text,"newVideo":dlg.currentFolder+"/"+data.timeline[i].vpath});
+                    console.log("VPATH -------------------------------------------- "+ dlg.currentFolder+"/"+data.timeline[i].vpath)
                 }
             }
 
@@ -150,7 +152,7 @@ Window {
                     positionRec =  positionRedRectangle(timeLines[i])
                       console.log("Create positsion   " + positionRec )
                     component = Qt.createComponent("qrc:/qml/controls/PRec.qml");
-                    sprite = component.createObject(parentComponent, {"x": positionRec});
+                    sprite = component.createObject(parentComponent, {"x": positionRec-i});
                     proRectangles.push(sprite)
                 }
             }
@@ -172,6 +174,44 @@ Window {
                         targetTime) / player.duration
             return targetPosition * progressRect.width
         }
+        //---------------------------------------------------------------//
+
+        function getfirstvideo(file)
+        {
+            var data =  file.read()
+            //  videoName=JSON.stringify(data.fvideo)
+            videoName=data.videos[0].vName
+            return JSON.stringify(data.fvideo)
+        }
+        function getidvideo(file,namevideo)
+        {
+
+            var data =  file.read()
+            //  videoName=JSON.stringify(data.fvideo)
+            for(var i = 0; i < data.videos.length; i++)
+            {
+
+                var video =  data.videos[i].vName;
+                   if(video==namevideo)
+                return videoId=i
+                   else videoId=0
+            }
+        }
+        function gettimelinebyid(file,videoid)
+        {
+
+            var data =  file.read()
+            var timelines = [];
+            for(var i = 0; i < data.videos[videoid].timeline.length; i++)
+            {
+ console.log(data.videos[videoid].timeline[i].show_time)
+                timelines.push(data.videos[videoid].timeline[i].show_time)
+            }
+            timeLines=timelines
+            return timelines
+
+        }
+
     }
 
     JsonFile {
@@ -197,16 +237,17 @@ Window {
             // player.source = dlg.currentFile
             // player.play()
             jsfile.name = dlg.currentFile
-
+            json.gettimelinebyid(jsfile,1)
+            // console.log(json.timeLines)
             //var data =  jsfile.read()
             //  var store = JSON.stringify(jsfile.read())
             // console.log("Folder: " +dlg.currentFolder)
-            json.getVideoName(jsfile)
+            //json.getVideoName(jsfile)
             var fullVideoPath = dlg.currentFolder+"/"+json.videoName
-            json.getTimeline(jsfile)
-            player.source=fullVideoPath
+        //    json.getTimeline(jsfile)
+          //  player.source=fullVideoPath
 
-            var timeList = json.getTimeline(jsfile)
+           // var timeList = json.getTimeline(jsfile)
             return
         }
         onRejected: {
@@ -303,8 +344,9 @@ Window {
                     volume: volumeSlider.value
                     playbackRate: 1.0
                     fillMode: VideoOutput.Stretch
+
                     onSourceChanged: {
-                        json.printRectangleSlider(jsfile,progressRect)
+                     //   json.printRectangleSlider(jsfile,progressRect)
 
                     }
                     MouseArea {
@@ -313,6 +355,7 @@ Window {
                         property int prevX: 0
                         property int prevY: 0
                         anchors.fill: parent
+
                         onPressed: mouse => {
                                        prevX = mouse.x
                                        prevY = mouse.y
@@ -692,11 +735,11 @@ Window {
                         enabled: player.seekable
                         value: player.duration > 0 ? player.position / player.duration : 0
                         onWidthChanged: {
-                        json.printRectangleSlider(jsfile,progressRect)
+                      //  json.printRectangleSlider(jsfile,progressRect)
 
                         }
                         onHeightChanged: {
-                            json.printRectangleSlider(jsfile,progressRect)
+                      //      json.printRectangleSlider(jsfile,progressRect)
                         }
                         background: Rectangle {
                               id: progressRect

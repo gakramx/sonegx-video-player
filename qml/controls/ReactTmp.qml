@@ -4,6 +4,7 @@ import QtQuick.Controls 6.3
 Rectangle {
 
     property string messageText: "Hello world"
+    property url newVideo: "file://test"
    height: Math.max(msgText.implicitHeight + 80, 88)
 z:1
     width: Math.max(msgText.implicitWidth + 40, 206)
@@ -36,6 +37,12 @@ z:1
 
                 font.pointSize: 12
                 //   font: openButton.font
+
+            }
+            onClicked: {
+                react.parent.source=newVideo
+                  react.visible=false
+            react.parent.play()
             }
         }
         MenuButton {
@@ -50,7 +57,12 @@ z:1
                 verticalAlignment: Text.AlignVCenter
 
                 font.pointSize: 12
+
                 //   font: openButton.font
+            }
+            onClicked: {
+                react.parent.play()
+            react.visible=false
             }
         }
     }
@@ -62,7 +74,7 @@ z:1
             wrapMode: TextArea.Wrap
          text: messageText
         anchors.top: parent.top
-        font.pixelSize: 12
+        font.pixelSize: 14
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: 10
@@ -94,6 +106,9 @@ z:1
                 progressBar.value -= 0.01; // decrease the value by 20% each time
             } else {
                 timer.stop(); // stop the timer when the progress bar is empty
+                react.parent.play()
+                react.visible=false
+
             }
         }
     }
