@@ -218,6 +218,11 @@ Window {
     }
     AES {
            id: aes
+           onEncryptionVideoProgressChanged: {
+               console.log("TETETET :"+  progress)
+               decryptProgress.value=progress
+               console.log("TETETET decryptProgress :"+  decryptProgress.value)
+           }
        }
     JsonFile {
         id: jsfile
@@ -259,13 +264,16 @@ Window {
         }
         onRejected: {
             console.log("Canceled")
-            var data =aes.encrypt("Helo volooooo food please ", "1234567891234567")
-        console.log(data)
-            var data2=aes.decrypt(data, "1234567891234567")
-             console.log(data2)
+          //   aes.encryptVideo("input.mp4","output.enc","1234")
+            //  var data =aes.encrypt("Helo volooooo food please ", "1234567891234567")
+      //  console.log(data)
+       //     var data2=aes.decrypt(data, "1234567891234567")
+     //        console.log(data2)
+             aes.decryptVideo("output.enc","input.mp4","1234")
             return
         }
     }
+
     Menu {
         id: contextMenu
         MenuItem {
@@ -392,6 +400,17 @@ Window {
                                 player.play()
                                 animationCloseMenu.start()
                             }
+                        }
+
+                        Slider {
+                            id: decryptProgress
+                            from:0
+                            to:100
+                            x: 28
+                            y: 411
+                            width: 394
+                            height: 48
+                            value: 0
                         }
                     }
                     property string timeText: {
