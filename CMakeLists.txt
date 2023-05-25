@@ -4,8 +4,8 @@ project(Dapp VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-find_package(Qt6 6.4 COMPONENTS Quick REQUIRED)
+link_directories("/usr/local/lib")
+find_package(Qt6 6.4 COMPONENTS Quick  Core REQUIRED)
 qt_add_resources( QMLRC qml.qrc
 )
 qt_add_resources(IMAGESRC images.qrc
@@ -15,6 +15,8 @@ qt_add_executable(appDapp
     main.cpp
     jsonfile.cpp
     jsonfile.h
+    aes.cpp
+    aes.h
      ${QMLRC}
      ${IMAGESRC}
 )
@@ -33,7 +35,7 @@ set_target_properties(appDapp PROPERTIES
 )
 
 target_link_libraries(appDapp
-    PRIVATE Qt6::Quick)
+    PRIVATE QtAES Qt6::Quick)
 
 install(TARGETS appDapp
     BUNDLE DESTINATION .

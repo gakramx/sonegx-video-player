@@ -7,6 +7,7 @@ import QtMultimedia
 import QtQuick.Dialogs
 import QtQuick.Controls.Material
 import JsonFile
+import AesCrypt
 Window {
     Material.theme: Material.Dark
     Material.accent: Material.Blue
@@ -100,6 +101,7 @@ Window {
         id:json
         property string videoName
         property int videoId
+        property int currentvideoId
         property var timeLines:[]
         property var proRectangles:[]
         function getVideoName(file)
@@ -204,7 +206,7 @@ Window {
             var timelines = [];
             for(var i = 0; i < data.videos[videoid].timeline.length; i++)
             {
- console.log(data.videos[videoid].timeline[i].show_time)
+                console.log(data.videos[videoid].timeline[i].show_time)
                 timelines.push(data.videos[videoid].timeline[i].show_time)
             }
             timeLines=timelines
@@ -212,11 +214,16 @@ Window {
 
         }
 
-    }
 
+    }
+    AES {
+           id: aes
+       }
     JsonFile {
         id: jsfile
     }
+
+
 
     Timer {
         interval: 1000 // 1 second
@@ -252,6 +259,10 @@ Window {
         }
         onRejected: {
             console.log("Canceled")
+            var data =aes.encrypt("Helo volooooo food please ", "1234567891234567")
+        console.log(data)
+            var data2=aes.decrypt(data, "1234567891234567")
+             console.log(data2)
             return
         }
     }
