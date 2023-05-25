@@ -22,7 +22,10 @@ QVariant AES::decrypt(QByteArray encodedText, QByteArray key)
     QString decodedString = QString(encryption.removePadding(decodedText));
    return QVariant::fromValue(decodedString);
 }
-bool AES::encryptVideo(const QString& inputFilePath, const QString& outputFilePath, const QByteArray& encryptionKey){
+
+QFuture<bool> AES::encryptVideo(const QString &inputFilePath, const QString &outputFilePath, const QByteArray &encryptionKey)
+{
+    return QtConcurrent::run([this,inputFilePath, outputFilePath, encryptionKey]() {
    QFile inputFile(inputFilePath);
    QFile outputFile(outputFilePath);
 
@@ -64,57 +67,62 @@ bool AES::encryptVideo(const QString& inputFilePath, const QString& outputFilePa
        qDebug() << "Encryption progress:" << progress << "%";
        emit encryptionVideoProgressChanged(progress);
    }
-   outputFile.close();
-   inputFile.close();
-
-    return true;
-}
-bool AES::decryptVideo(const QString &inputFilePath, const QString &outputFilePath, const QByteArray &encryptionKey){
-    QFile inputFile(inputFilePath);
-    QFile outputFile(outputFilePath);
-
-    if (!inputFile.open(QIODevice::ReadOnly)) {
-       // Failed to open input file
-       return false;
-    }
-
-    if (!outputFile.open(QIODevice::WriteOnly)) {
-       // Failed to open output file
+       outputFile.close();
        inputFile.close();
-       return false;
-    }
 
-    qint64 totalBytes = inputFile.size();
-    qint64 bytesProcessed = 0;
+       return true;
+   });
+}
 
-    const int bufferSize = 1024 * 1024; // 1MB
-    char buffer[bufferSize];
+QFuture<bool> AES::decryptVideo(const QString &inputFilePath, const QString &outputFilePath, const QByteArray &encryptionKey)
+{
+    return QtConcurrent::run([this,inputFilePath, outputFilePath, encryptionKey]() {
+        QFile inputFile(inputFilePath);
+        QFile outputFile(outputFilePath);
 
-    int keyLength = encryptionKey.length();
-    int keyIndex = 0;
+        if (!inputFile.open(QIODevice::ReadOnly)) {
+            // Failed to open input file
+            return false;
+        }
 
-    while (!inputFile.atEnd()) {
-       qint64 bytesRead = inputFile.read(buffer, bufferSize);
+        if (!outputFile.open(QIODevice::WriteOnly)) {
+            // Failed to open output file
+            inputFile.close();
+            return false;
+        }
 
-       for (qint64 i = 0; i < bytesRead; ++i) {
-           buffer[i] = buffer[i] ^ encryptionKey[keyIndex];
+        qint64 totalBytes = inputFile.size();
+        qint64 bytesProcessed = 0;
 
-           keyIndex++;
-           if (keyIndex == keyLength) {
-               keyIndex = 0;
-           }
-       }
+        const int bufferSize = 1024 * 1024; // 1MB
+        char buffer[bufferSize];
 
-       outputFile.write(buffer, bytesRead);
+        int keyLength = encryptionKey.length();
+        int keyIndex = 0;
 
-       bytesProcessed += bytesRead;
-       int progress = static_cast<int>((bytesProcessed * 100) / totalBytes);
-       qDebug() << "Decryption progress:" << progress << "%";
-       emit encryptionVideoProgressChanged(progress);
-    }
+        while (!inputFile.atEnd()) {
+            qint64 bytesRead = inputFile.read(buffer, bufferSize);
 
-    outputFile.close();
-    inputFile.close();
+            for (qint64 i = 0; i < bytesRead; ++i) {
+                buffer[i] = buffer[i] ^ encryptionKey[keyIndex];
 
-    return true;
+                keyIndex++;
+                if (keyIndex == keyLength) {
+                    keyIndex = 0;
+                }
+            }
+
+            outputFile.write(buffer, bytesRead);
+
+            bytesProcessed += bytesRead;
+            int progress = static_cast<int>((bytesProcessed * 100) / totalBytes);
+            qDebug() << "Decryption progress:" << progress << "%";
+            emit encryptionVideoProgressChanged(progress);
+        }
+
+        outputFile.close();
+        inputFile.close();
+
+        return true;
+    });
 }

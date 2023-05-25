@@ -5,7 +5,7 @@ project(Dapp VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 link_directories("/usr/local/lib")
-find_package(Qt6 6.4 COMPONENTS Quick  Core REQUIRED)
+find_package(Qt6 6.4 COMPONENTS Quick  Core Concurrent REQUIRED)
 qt_add_resources( QMLRC qml.qrc
 )
 qt_add_resources(IMAGESRC images.qrc
@@ -35,7 +35,7 @@ set_target_properties(appDapp PROPERTIES
 )
 
 target_link_libraries(appDapp
-    PRIVATE QtAES Qt6::Quick)
+    PRIVATE QtAES Qt6::Quick Qt6::Concurrent)
 
 install(TARGETS appDapp
     BUNDLE DESTINATION .
