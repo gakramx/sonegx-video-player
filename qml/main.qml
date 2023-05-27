@@ -187,7 +187,6 @@ Window {
         }
         function getidvideo(file,namevideo)
         {
-
             var data =  file.read()
             //  videoName=JSON.stringify(data.fvideo)
             for(var i = 0; i < data.videos.length; i++)
@@ -224,13 +223,18 @@ Window {
             loadLabe.text="Loading "+ progress +" %"
             decryptProgress.value=progress
         }
-        onDecryptionFinished:(fullname) => {
-                                 loadArea.visible = false
-                                 console.log(fullname)
-                                 var videoFullname="file://"+fullname
-                                 player.source=videoFullname
-                                 console.log(player.source)
-                             }
+        onDecryptionVideoFinished:(fullname) => {
+                                      loadArea.visible = false
+                                      console.log(fullname)
+                                      var videoFullname="file://"+fullname
+                                      player.source=videoFullname
+                                      console.log(player.source)
+                                  }
+        onDecryptionProjectFinished: (projectFile)=>{
+
+                                         jsfile.name =projectFile
+                                         json.getfirstvideo(jsfile)
+                                     }
     }
     JsonFile {
         id: jsfile
@@ -274,10 +278,10 @@ Window {
             console.log("Canceled")
             //   aes.encryptVideo("input.mp4","output.enc","1234")
             // var data =aes.encrypt("1.json", "1234567891234567")
-           //   console.log(data)
-                 var data2=aes.decrypt("1.json.encrypted", "1234567891234567")
-                   console.log(data2)
-         //  aes.decryptVideo("output.enc","input.mp4","1234")
+            //   console.log(data)
+            var data2=aes.decrypt("1.json.encrypted", "1234567891234567")
+            console.log(data2)
+            //  aes.decryptVideo("output.enc","input.mp4","1234")
 
 
             return
@@ -379,7 +383,7 @@ Window {
 
                     }
                     onErrorChanged: {
-                         console.log("Video Error:", player.errorString)
+                        console.log("Video Error:", player.errorString)
                     }
                     MouseArea {
                         id: iMouseArea

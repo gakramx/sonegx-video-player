@@ -68,7 +68,8 @@ QVariant AES::decrypt(const QString& filePath, QByteArray key)
      QTextStream stream(&outputFile);
      stream << decodedString;
      outputFile.close();
-     qDebug()<<"Decrypt "<<decryptedFilePath;
+    // qDebug()<<"Decrypt "<<decryptedFilePath;
+     emit decryptionProjectFinished(decryptedFilePath);
      return QVariant::fromValue(decryptedFilePath);
 }
 
@@ -181,7 +182,7 @@ QFuture<bool> AES::decryptVideo(const QString &inputFilePath, const QString &out
         outputFile.close();
         inputFile.close();
 
-        emit decryptionFinished(fullname);
+        emit decryptionVideoFinished(fullname);
         return true;
     });
 }

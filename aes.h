@@ -18,7 +18,8 @@ public:
      ~AES();
 signals:
     void encryptionVideoProgressChanged(int progress);
-    void decryptionFinished(const QString &fullpathname);
+    void decryptionVideoFinished(const QString &fullpathname);
+    void decryptionProjectFinished(const QString &projecFile);
 private:
         QTemporaryDir dir;
         QString outputFullFilename;
