@@ -8,23 +8,73 @@ AES::AES(QObject *parent)
 {
     setoutputFullFilename(dir.path());
 }
-QVariant AES::encrypt(QByteArray plainText, QByteArray key)
+QVariant AES::encrypt(const QString& filePath, QByteArray key)
 {
+    QFile inputFile(filePath);
+    if (!inputFile.open(QIODevice::ReadOnly))
+    {
+        // Handle file opening error
+        return QVariant();
+    }
+
+    QByteArray plainText = inputFile.readAll();
+    inputFile.close();
+
     QAESEncryption encryption(QAESEncryption::AES_128, QAESEncryption::ECB);
     QByteArray encodedText = encryption.encode(plainText, key);
-     return QVariant::fromValue(encodedText);
+
+    // Save the encrypted content to a new file
+    QString encryptedFilePath = filePath + ".encrypted";
+    QFile outputFile(encryptedFilePath);
+    if (!outputFile.open(QIODevice::WriteOnly))
+    {
+        // Handle file saving error
+        return QVariant();
+    }
+
+    outputFile.write(encodedText);
+    outputFile.close();
+ qDebug()<<"encryp "<<encryptedFilePath;
+    return QVariant::fromValue(encryptedFilePath);
 }
 
-QVariant AES::decrypt(QByteArray encodedText, QByteArray key)
+QVariant AES::decrypt(const QString& filePath, QByteArray key)
 {
-    QAESEncryption encryption(QAESEncryption::AES_128, QAESEncryption::ECB);
-    QByteArray decodedText = encryption.decode(encodedText, key);
-    QString decodedString = QString(encryption.removePadding(decodedText));
-   return QVariant::fromValue(decodedString);
+
+     QFile inputFile(filePath);
+     if (!inputFile.open(QIODevice::ReadOnly))
+     {
+         // Handle file opening error
+         return QVariant();
+     }
+
+     QByteArray encodedText = inputFile.readAll();
+     inputFile.close();
+
+     QAESEncryption encryption(QAESEncryption::AES_128, QAESEncryption::ECB);
+     QByteArray decodedText = encryption.decode(encodedText, key);
+     QString decodedString = QString(encryption.removePadding(decodedText));
+
+     // Save the decrypted content to a new file
+     QString _fullname = getoutputFullFilename();
+     QString decryptedFilePath = _fullname + "/" + filePath;
+     QFile outputFile(decryptedFilePath);
+     if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
+     {
+         // Handle file saving error
+         return QVariant();
+     }
+
+     QTextStream stream(&outputFile);
+     stream << decodedString;
+     outputFile.close();
+     qDebug()<<"Decrypt "<<decryptedFilePath;
+     return QVariant::fromValue(decryptedFilePath);
 }
 
 QFuture<bool> AES::encryptVideo(const QString &inputFilePath, const QString &outputFilePath, const QByteArray &encryptionKey)
 {
+
     return QtConcurrent::run([this,inputFilePath, outputFilePath, encryptionKey]() {
    QFile inputFile(inputFilePath);
    QFile outputFile(outputFilePath);
@@ -77,7 +127,7 @@ QFuture<bool> AES::encryptVideo(const QString &inputFilePath, const QString &out
 QFuture<bool> AES::decryptVideo(const QString &inputFilePath, const QString &outputFilePath, const QByteArray &encryptionKey)
 {
     return QtConcurrent::run([this,inputFilePath, outputFilePath, encryptionKey]() {
-
+   // TODO: check file is exist before
         if (!dir.isValid()) {
              return false;
         }

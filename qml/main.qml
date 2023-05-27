@@ -273,11 +273,11 @@ Window {
         onRejected: {
             console.log("Canceled")
             //   aes.encryptVideo("input.mp4","output.enc","1234")
-            //  var data =aes.encrypt("Helo volooooo food please ", "1234567891234567")
-            //  console.log(data)
-            //     var data2=aes.decrypt(data, "1234567891234567")
-            //        console.log(data2)
-           aes.decryptVideo("output.enc","input.mp4","1234")
+            // var data =aes.encrypt("1.json", "1234567891234567")
+           //   console.log(data)
+                 var data2=aes.decrypt("1.json.encrypted", "1234567891234567")
+                   console.log(data2)
+         //  aes.decryptVideo("output.enc","input.mp4","1234")
 
 
             return
