@@ -6,7 +6,7 @@
 AES::AES(QObject *parent)
     : QObject{parent}
 {
-
+    setoutputFullFilename(dir.path());
 }
 QVariant AES::encrypt(QByteArray plainText, QByteArray key)
 {
@@ -77,8 +77,16 @@ QFuture<bool> AES::encryptVideo(const QString &inputFilePath, const QString &out
 QFuture<bool> AES::decryptVideo(const QString &inputFilePath, const QString &outputFilePath, const QByteArray &encryptionKey)
 {
     return QtConcurrent::run([this,inputFilePath, outputFilePath, encryptionKey]() {
+
+        if (!dir.isValid()) {
+             return false;
+        }
+
+
+        QString _fullname = getoutputFullFilename();
+        QString fullname = _fullname + "/" + outputFilePath;
         QFile inputFile(inputFilePath);
-        QFile outputFile(outputFilePath);
+        QFile outputFile(fullname);
 
         if (!inputFile.open(QIODevice::ReadOnly)) {
             // Failed to open input file
@@ -123,6 +131,19 @@ QFuture<bool> AES::decryptVideo(const QString &inputFilePath, const QString &out
         outputFile.close();
         inputFile.close();
 
+        emit decryptionFinished(fullname);
         return true;
     });
+}
+QString AES::getoutputFullFilename() const {
+    return outputFullFilename;
+}
+void AES::setoutputFullFilename(const QString& newFilename)
+{
+    outputFullFilename = newFilename;
+}
+AES::~AES()
+{
+    // Destructor implementation
+ //   dir.removeRecursively();
 }

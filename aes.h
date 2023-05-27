@@ -13,8 +13,15 @@ public:
     Q_INVOKABLE QVariant decrypt(QByteArray encodedText, QByteArray key);
     Q_INVOKABLE QFuture<bool> encryptVideo(const QString& inputFilePath, const QString& outputFilePath,const QByteArray& encryptionKey);
     Q_INVOKABLE QFuture<bool> decryptVideo(const QString& inputFilePath, const QString& outputFilePath,const QByteArray& encryptionKey);
+    Q_INVOKABLE QString getoutputFullFilename() const;
+    void setoutputFullFilename(const QString& newFilename);
+     ~AES();
 signals:
     void encryptionVideoProgressChanged(int progress);
+    void decryptionFinished(const QString &fullpathname);
+private:
+        QTemporaryDir dir;
+        QString outputFullFilename;
 };
 
 #endif // AES_H

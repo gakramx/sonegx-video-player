@@ -135,7 +135,7 @@ Window {
                 if(position==timeLines[i]){
                     player.pause()
                     component = Qt.createComponent("qrc:/qml/controls/ReactTmp.qml");
-                  //  sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text});
+                    //  sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text});
                     sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text,"newVideo":dlg.currentFolder+"/"+data.timeline[i].vpath});
                     console.log("VPATH -------------------------------------------- "+ dlg.currentFolder+"/"+data.timeline[i].vpath)
                 }
@@ -145,14 +145,14 @@ Window {
         function printRectangleSlider(file,parentComponent){
 
             if(proRectangles==0){
-                 console.log("Work  " )
+                console.log("Work  " )
                 var component;
                 var sprite;
                 var positionRec;
                 for (var i = 0; i < timeLines.length; i++) {
                     console.log("Create  " + timeLines[i])
                     positionRec =  positionRedRectangle(timeLines[i])
-                      console.log("Create positsion   " + positionRec )
+                    console.log("Create positsion   " + positionRec )
                     component = Qt.createComponent("qrc:/qml/controls/PRec.qml");
                     sprite = component.createObject(parentComponent, {"x": positionRec-i});
                     proRectangles.push(sprite)
@@ -162,8 +162,8 @@ Window {
 
                 for (var i = 0; i < proRectangles.length; i++) {
 
-                        console.log("Resize  " + timeLines[i])
-                       positionRec =  positionRedRectangle(timeLines[i])
+                    console.log("Resize  " + timeLines[i])
+                    positionRec =  positionRedRectangle(timeLines[i])
                     console.log("Resize positsion  " + positionRec )
                     proRectangles[i].x=positionRec-i
                 }
@@ -194,9 +194,9 @@ Window {
             {
 
                 var video =  data.videos[i].vName;
-                   if(video==namevideo)
-                return videoId=i
-                   else videoId=0
+                if(video==namevideo)
+                    return videoId=i
+                else videoId=0
             }
         }
         function gettimelinebyid(file,videoid)
@@ -217,13 +217,21 @@ Window {
 
     }
     AES {
-           id: aes
-           onEncryptionVideoProgressChanged: {
-               console.log("TETETET :"+  progress)
-               decryptProgress.value=progress
-               console.log("TETETET decryptProgress :"+  decryptProgress.value)
-           }
-       }
+        id: aes
+        onEncryptionVideoProgressChanged: {
+            openArea.visible=false
+            loadArea.visible=true
+            loadLabe.text="Loading "+ progress +" %"
+            decryptProgress.value=progress
+        }
+        onDecryptionFinished:(fullname) => {
+                                 loadArea.visible = false
+                                 console.log(fullname)
+                                 var videoFullname="file://"+fullname
+                                 player.source=videoFullname
+                                 console.log(player.source)
+                             }
+    }
     JsonFile {
         id: jsfile
     }
@@ -256,20 +264,22 @@ Window {
             // console.log("Folder: " +dlg.currentFolder)
             //json.getVideoName(jsfile)
             var fullVideoPath = dlg.currentFolder+"/"+json.videoName
-        //    json.getTimeline(jsfile)
-          //  player.source=fullVideoPath
+            //    json.getTimeline(jsfile)
+            //  player.source=fullVideoPath
 
-           // var timeList = json.getTimeline(jsfile)
+            // var timeList = json.getTimeline(jsfile)
             return
         }
         onRejected: {
             console.log("Canceled")
-          //   aes.encryptVideo("input.mp4","output.enc","1234")
+            //   aes.encryptVideo("input.mp4","output.enc","1234")
             //  var data =aes.encrypt("Helo volooooo food please ", "1234567891234567")
-      //  console.log(data)
-       //     var data2=aes.decrypt(data, "1234567891234567")
-     //        console.log(data2)
-             aes.decryptVideo("output.enc","input.mp4","1234")
+            //  console.log(data)
+            //     var data2=aes.decrypt(data, "1234567891234567")
+            //        console.log(data2)
+           aes.decryptVideo("output.enc","input.mp4","1234")
+
+
             return
         }
     }
@@ -365,8 +375,11 @@ Window {
                     fillMode: VideoOutput.Stretch
 
                     onSourceChanged: {
-                     //   json.printRectangleSlider(jsfile,progressRect)
+                        //   json.printRectangleSlider(jsfile,progressRect)
 
+                    }
+                    onErrorChanged: {
+                         console.log("Video Error:", player.errorString)
                     }
                     MouseArea {
                         id: iMouseArea
@@ -400,17 +413,6 @@ Window {
                                 player.play()
                                 animationCloseMenu.start()
                             }
-                        }
-
-                        Slider {
-                            id: decryptProgress
-                            from:0
-                            to:100
-                            x: 28
-                            y: 411
-                            width: 394
-                            height: 48
-                            value: 0
                         }
                     }
                     property string timeText: {
@@ -765,14 +767,14 @@ Window {
                         enabled: player.seekable
                         value: player.duration > 0 ? player.position / player.duration : 0
                         onWidthChanged: {
-                      //  json.printRectangleSlider(jsfile,progressRect)
+                            //  json.printRectangleSlider(jsfile,progressRect)
 
                         }
                         onHeightChanged: {
-                      //      json.printRectangleSlider(jsfile,progressRect)
+                            //      json.printRectangleSlider(jsfile,progressRect)
                         }
                         background: Rectangle {
-                              id: progressRect
+                            id: progressRect
                             implicitHeight: 4
                             color: "white"
                             radius: 3
@@ -976,6 +978,41 @@ Window {
                         highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
                     }
 
+                }
+
+                Rectangle {
+                    id: loadArea
+                    width: 567
+                    height: 200
+                    visible: true
+                    color: "#00000000"
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    Slider {
+                        id: decryptProgress
+                        y: 212
+                        from:0
+                        to:100
+                        width: 394
+                        height: 48
+                        anchors.bottom: parent.bottom
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.bottomMargin: 1
+                        value: 0
+                        handle: Item {
+
+                        }
+                    }
+
+                    Label {
+                        id: loadLabe
+                        visible: true
+                        text: qsTr("Label")
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.pointSize: 18
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
                 }
             }
             Timer {
