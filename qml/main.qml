@@ -102,6 +102,7 @@ Window {
         property int currentvideoId
         property var timeLines:[]
         property var proRectangles:[]
+        signal filevideoChanged(string videoFile)
         function getVideoName(file)
         {
             var data =  file.read()
@@ -204,6 +205,7 @@ Window {
 
             var data =  file.read()
             videoFile  =  data.videos[id].vbaseName;
+            filevideoChanged(videoFile)
             return videoFile;
         }
         function gettimelinebyid(file,videoid)
@@ -244,6 +246,14 @@ Window {
                                          console.log(json.getfilevideo(jsfile,0))
                                      }
     }
+    Connections {
+       target: json
+         function onFilevideoChanged(videoFile){
+           // Handle the emitted signal
+      aes.decryptVideo(videoFile,videoFile,"1234")
+        }
+    }
+
     JsonFile {
         id: jsfile
     }
