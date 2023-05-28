@@ -92,9 +92,6 @@ Window {
             var seconds = parseInt(timeParts[2])
             return (hours * 60 * 60 + minutes * 60 + seconds) * 1000
         }
-
-
-
     }
 
     QtObject {
@@ -231,7 +228,6 @@ Window {
                                       console.log(player.source)
                                   }
         onDecryptionProjectFinished: (projectFile)=>{
-
                                          jsfile.name =projectFile
                                          json.getfirstvideo(jsfile)
                                      }
@@ -257,20 +253,21 @@ Window {
         modality: Qt.WindowModal
         onAccepted: {
             console.log("You chose: " + dlg.currentFile)
+            console.log("You chose: " + dlg.currentFolder)
             openArea.visible = false
             // player.source = dlg.currentFile
             // player.play()
-            jsfile.name = dlg.currentFile
-            json.gettimelinebyid(jsfile,1)
+          //  jsfile.name = dlg.currentFile
+          // json.gettimelinebyid(jsfile,1)
             // console.log(json.timeLines)
             //var data =  jsfile.read()
             //  var store = JSON.stringify(jsfile.read())
             // console.log("Folder: " +dlg.currentFolder)
             //json.getVideoName(jsfile)
-            var fullVideoPath = dlg.currentFolder+"/"+json.videoName
+          //  var fullVideoPath = dlg.currentFolder+"/"+json.videoName
             //    json.getTimeline(jsfile)
             //  player.source=fullVideoPath
-
+            aes.decrypt(dlg.currentFile, "1234567891234567")
             // var timeList = json.getTimeline(jsfile)
             return
         }
@@ -279,8 +276,9 @@ Window {
             //   aes.encryptVideo("input.mp4","output.enc","1234")
             // var data =aes.encrypt("1.json", "1234567891234567")
             //   console.log(data)
-            var data2=aes.decrypt("1.json.encrypted", "1234567891234567")
-            console.log(data2)
+          //  var data2=aes.decrypt("1.json.encrypted", "1234567891234567")
+             //var data2=aes.encrypt("project1", "1234567891234567")
+           // console.log(data2)
             //  aes.decryptVideo("output.enc","input.mp4","1234")
 
 

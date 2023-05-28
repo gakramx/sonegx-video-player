@@ -24,7 +24,7 @@ QVariant AES::encrypt(const QString& filePath, QByteArray key)
     QByteArray encodedText = encryption.encode(plainText, key);
 
     // Save the encrypted content to a new file
-    QString encryptedFilePath = filePath + ".encrypted";
+    QString encryptedFilePath = filePath + ".sgr";
     QFile outputFile(encryptedFilePath);
     if (!outputFile.open(QIODevice::WriteOnly))
     {
@@ -40,7 +40,9 @@ QVariant AES::encrypt(const QString& filePath, QByteArray key)
 
 QVariant AES::decrypt(const QString& filePath, QByteArray key)
 {
-
+    QUrl url(filePath);
+    QString localName = url.isLocalFile() ? url.toLocalFile() : filePath;
+    qDebug()<<"FILES : "<<localName;
      QFile inputFile(filePath);
      if (!inputFile.open(QIODevice::ReadOnly))
      {
