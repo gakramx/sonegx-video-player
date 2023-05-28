@@ -1,6 +1,7 @@
 #include "aes.h"
 #include <QtAES/qaesencryption.h>
 #include <QFile>
+#include <QFileInfo>
 #include <QCryptographicHash>
 #include <QDebug>
 AES::AES(QObject *parent)
@@ -43,7 +44,10 @@ QVariant AES::decrypt(const QString& filePath, QByteArray key)
     QUrl url(filePath);
     QString localName = url.isLocalFile() ? url.toLocalFile() : filePath;
     qDebug()<<"FILES : "<<localName;
-     QFile inputFile(filePath);
+     QFile inputFile(localName);
+    QFileInfo fileInfo(inputFile);
+    QString baseName = fileInfo.baseName();
+    qDebug()<<"baseName : "<<baseName;
      if (!inputFile.open(QIODevice::ReadOnly))
      {
          // Handle file opening error
@@ -59,7 +63,8 @@ QVariant AES::decrypt(const QString& filePath, QByteArray key)
 
      // Save the decrypted content to a new file
      QString _fullname = getoutputFullFilename();
-     QString decryptedFilePath = _fullname + "/" + filePath;
+     QString decryptedFilePath = _fullname + "/" + baseName;
+      qDebug()<<"decryptedFilePath : "<<decryptedFilePath;
      QFile outputFile(decryptedFilePath);
      if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
      {

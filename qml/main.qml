@@ -97,6 +97,7 @@ Window {
     QtObject {
         id:json
         property string videoName
+        property string videoFile
         property int videoId
         property int currentvideoId
         property var timeLines:[]
@@ -177,13 +178,16 @@ Window {
 
         function getfirstvideo(file)
         {
+
             var data =  file.read()
             //  videoName=JSON.stringify(data.fvideo)
             videoName=data.videos[0].vName
+
             return JSON.stringify(data.fvideo)
         }
         function getidvideo(file,namevideo)
         {
+
             var data =  file.read()
             //  videoName=JSON.stringify(data.fvideo)
             for(var i = 0; i < data.videos.length; i++)
@@ -194,6 +198,13 @@ Window {
                     return videoId=i
                 else videoId=0
             }
+        }
+        function getfilevideo(file,id)
+        {
+
+            var data =  file.read()
+            videoFile  =  data.videos[id].vbaseName;
+            return videoFile;
         }
         function gettimelinebyid(file,videoid)
         {
@@ -207,7 +218,6 @@ Window {
             }
             timeLines=timelines
             return timelines
-
         }
 
 
@@ -230,6 +240,8 @@ Window {
         onDecryptionProjectFinished: (projectFile)=>{
                                          jsfile.name =projectFile
                                          json.getfirstvideo(jsfile)
+                                         json.gettimelinebyid(jsfile,1)
+                                         console.log(json.getfilevideo(jsfile,0))
                                      }
     }
     JsonFile {
@@ -253,18 +265,17 @@ Window {
         modality: Qt.WindowModal
         onAccepted: {
             console.log("You chose: " + dlg.currentFile)
-            console.log("You chose: " + dlg.currentFolder)
             openArea.visible = false
             // player.source = dlg.currentFile
             // player.play()
-          //  jsfile.name = dlg.currentFile
-          // json.gettimelinebyid(jsfile,1)
+            //  jsfile.name = dlg.currentFile
+            // json.gettimelinebyid(jsfile,1)
             // console.log(json.timeLines)
             //var data =  jsfile.read()
             //  var store = JSON.stringify(jsfile.read())
             // console.log("Folder: " +dlg.currentFolder)
             //json.getVideoName(jsfile)
-          //  var fullVideoPath = dlg.currentFolder+"/"+json.videoName
+            //  var fullVideoPath = dlg.currentFolder+"/"+json.videoName
             //    json.getTimeline(jsfile)
             //  player.source=fullVideoPath
             aes.decrypt(dlg.currentFile, "1234567891234567")
@@ -276,9 +287,9 @@ Window {
             //   aes.encryptVideo("input.mp4","output.enc","1234")
             // var data =aes.encrypt("1.json", "1234567891234567")
             //   console.log(data)
-          //  var data2=aes.decrypt("1.json.encrypted", "1234567891234567")
-             //var data2=aes.encrypt("project1", "1234567891234567")
-           // console.log(data2)
+            //  var data2=aes.decrypt("1.json.encrypted", "1234567891234567")
+            //var data2=aes.encrypt("project1", "1234567891234567")
+            // console.log(data2)
             //  aes.decryptVideo("output.enc","input.mp4","1234")
 
 
