@@ -96,11 +96,17 @@ Window {
 
     QtObject {
         id:json
+        //for single video
         property string videoName
         property string videoFile
         property int videoId
         property int currentvideoId
+
         property var timeLines:[]
+
+        property var namesList:[]
+        property var descList:[]
+
         property var proRectangles:[]
         signal filevideoChanged(string videoFile)
         function getVideoName(file)
@@ -135,7 +141,7 @@ Window {
                     player.pause()
                     component = Qt.createComponent("qrc:/qml/controls/ReactTmp.qml");
                     //  sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text});
-                   // sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text,"newVideo":dlg.currentFolder+"/"+data.timeline[i].vpath});
+                    // sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text,"newVideo":dlg.currentFolder+"/"+data.timeline[i].vpath});
                     console.log("VPATH -------------------------------------------- "+ dlg.currentFolder+"/"+data.timeline[i].vpath)
                 }
             }
@@ -200,6 +206,21 @@ Window {
                 else videoId=0
             }
         }
+        function getinfovideo(file)
+        {
+
+            var data =  file.read()
+            var nameslist=[]
+            var desclist=[]
+            //  videoName=JSON.stringify(data.fvideo)
+            for(var i = 0; i < data.videos.length; i++)
+            {
+                nameslist.push(data.videos[i].vName)
+                desclist.push(data.videos[i].desc)
+            }
+          namesList= nameslist
+          descList= desclist
+        }
         function getfilevideo(file,id)
         {
             var data =  file.read()
@@ -242,6 +263,8 @@ Window {
                                          json.getfirstvideo(jsfile)
                                          json.gettimelinebyid(jsfile,1)
                                          console.log(json.getfilevideo(jsfile,0))
+                                         json.getinfovideo(jsfile)
+                                        videosMdl.updateModel()
                                      }
     }
     Connections {
@@ -295,7 +318,7 @@ Window {
             // var data =aes.encrypt("1.json", "1234567891234567")
             //   console.log(data)
             //  var data2=aes.decrypt("1.json.encrypted", "1234567891234567")
-            //var data2=aes.encrypt("project1", "1234567891234567")
+           // var data2=aes.encrypt("project1", "1234567891234567")
             // console.log(data2)
             //  aes.decryptVideo("output.enc","input.mp4","1234")
 
@@ -458,19 +481,19 @@ Window {
                         } else if (playbackRate < 0.5) {
                             playbackRate = 0.5
                         }
-                            playBackRateStatus.text= "Speed: "+ playbackRate.toFixed(1)+"x"
-                            playBackRateStatus.visible = true
-                            timerHidestatus.restart()
+                        playBackRateStatus.text= "Speed: "+ playbackRate.toFixed(1)+"x"
+                        playBackRateStatus.visible = true
+                        timerHidestatus.restart()
 
                     }
                     Timer {
-                           id: timerHidestatus
-                           interval: 1000 // 1 second
-                           onTriggered: {
-                               playBackRateStatus.visible = false
-                               timerHidestatus.stop()
-                           }
-                       }
+                        id: timerHidestatus
+                        interval: 1000 // 1 second
+                        onTriggered: {
+                            playBackRateStatus.visible = false
+                            timerHidestatus.stop()
+                        }
+                    }
 
 
                     function switchFillMode() {
@@ -547,9 +570,6 @@ Window {
                                     && !increaseSpeed.hovered)
                                 timeranimationMenu.restart()
                         }
-
-
-
                     }
 
                     Row {
@@ -737,8 +757,6 @@ Window {
                                     else{
                                         animationCloseoptionMenu.start()
                                     }
-
-
                                 }
                             }
 
@@ -786,8 +804,6 @@ Window {
                                 onHoveredChanged: hovered ? timeranimationMenu.stop(
                                                                 ) : timeranimationMenu.restart()
                             }
-
-
                             spacing: 4
                             leftPadding: 2
                             topPadding: 2
@@ -975,108 +991,18 @@ Window {
                     }
 
                     ListModel {
-                        id:contactMdl
-                        ListElement {
-                            name: "Course 1"
-                            number: "00:22:44"
-                        }
-                        ListElement {
-                            name: "Course 2"
-                            number: "00:26:04"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
-                        ListElement {
-                            name: "Course 3"
-                            number: "00:30:12"
-                        }
+                        id:videosMdl
+                        function updateModel(){
+                            videosMdl.clear()
+                            for (var i = 0; i < json.namesList.length; i++) {
+                                console.log(json.descList[i])
+                                videosMdl.append({
+                                    "name": json.namesList[i],
+                                    "description": json.descList[i]
+                                })
+                            }
 
+                        }
                     }
                     Component {
                         id: contactDelegate
@@ -1094,8 +1020,8 @@ Window {
                                 }
 
                                 Text {
-                                    id: nameLabel2
-                                    text: '<b>Name 2: </b>' + name
+                                    id: descriptionLabel
+                                    text: '<b>description: </b>' + description
                                     color: "white"
                                     anchors.leftMargin: 10
                                 }
@@ -1121,7 +1047,7 @@ Window {
                         anchors.topMargin: 2
                         z: 0
 
-                        model: contactMdl
+                        model: videosMdl
                         delegate:contactDelegate
                         highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
                     }
