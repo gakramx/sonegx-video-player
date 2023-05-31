@@ -135,7 +135,7 @@ Window {
                     player.pause()
                     component = Qt.createComponent("qrc:/qml/controls/ReactTmp.qml");
                     //  sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text});
-                    sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text,"newVideo":dlg.currentFolder+"/"+data.timeline[i].vpath});
+                   // sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text,"newVideo":dlg.currentFolder+"/"+data.timeline[i].vpath});
                     console.log("VPATH -------------------------------------------- "+ dlg.currentFolder+"/"+data.timeline[i].vpath)
                 }
             }
@@ -202,7 +202,6 @@ Window {
         }
         function getfilevideo(file,id)
         {
-
             var data =  file.read()
             videoFile  =  data.videos[id].vbaseName;
             filevideoChanged(videoFile)
@@ -210,7 +209,6 @@ Window {
         }
         function gettimelinebyid(file,videoid)
         {
-
             var data =  file.read()
             var timelines = [];
             for(var i = 0; i < data.videos[videoid].timeline.length; i++)
@@ -247,17 +245,16 @@ Window {
                                      }
     }
     Connections {
-       target: json
-         function onFilevideoChanged(videoFile){
-           // Handle the emitted signal
-      aes.decryptVideo(videoFile,videoFile,"1234")
+        target: json
+        function onFilevideoChanged(videoFile){
+            // Handle the emitted signal
+            aes.decryptVideo(videoFile,videoFile,"1234")
         }
     }
 
     JsonFile {
         id: jsfile
     }
-
 
 
     Timer {
@@ -404,6 +401,7 @@ Window {
                     onErrorChanged: {
                         console.log("Video Error:", player.errorString)
                     }
+
                     MouseArea {
                         id: iMouseArea
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -455,7 +453,25 @@ Window {
                     function updatePlaybackRate(delta) {
                         // modify the playback rate by adding the delta value
                         playbackRate += delta
+                        if (playbackRate > 1.5) {
+                            playbackRate = 1.5
+                        } else if (playbackRate < 0.5) {
+                            playbackRate = 0.5
+                        }
+                            playBackRateStatus.text= "Speed: "+ playbackRate.toFixed(1)+"x"
+                            playBackRateStatus.visible = true
+                            timerHidestatus.restart()
+
                     }
+                    Timer {
+                           id: timerHidestatus
+                           interval: 1000 // 1 second
+                           onTriggered: {
+                               playBackRateStatus.visible = false
+                               timerHidestatus.stop()
+                           }
+                       }
+
 
                     function switchFillMode() {
                         // switch the fill mode to the next value in the sequence
@@ -486,8 +502,8 @@ Window {
                 }
                 Rectangle {
                     id: playerMenu
-                    y: 597
-                    height: 140
+                    y: 433
+                    height: 164
                     opacity: 1
                     color: "#e41b2631"
                     //  z: 1
@@ -853,14 +869,14 @@ Window {
 
                     Label {
                         id: timeLabel
-                        x: 810
-                        width: 81
+                        x: 830
+                        width: 164
                         height: 26
-                        text: internal.msToTimeString(player.position)
-                        anchors.right: parent.right
+                        text: internal.msToTimeString(player.position) +"/"+internal.msToTimeString(player.duration)
+                        anchors.right: progressSlider.right
                         anchors.top: progressSlider.bottom
                         horizontalAlignment: Text.AlignLeft
-                        anchors.rightMargin: 5
+                        anchors.rightMargin: 0
                         anchors.topMargin: 2
                         font.bold: true
                         font.pointSize: 14
@@ -929,7 +945,7 @@ Window {
                 Rectangle {
                     id: optionMenu
                     x: 814
-                    width:  0
+                    width:  200
                     color: "#e41b2631"
                     anchors.right: parent.right
                     anchors.top: player.top
@@ -972,16 +988,124 @@ Window {
                             name: "Course 3"
                             number: "00:30:12"
                         }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+                        ListElement {
+                            name: "Course 3"
+                            number: "00:30:12"
+                        }
+
                     }
                     Component {
                         id: contactDelegate
+                        Rectangle {
+                            width: listVideos.width
+                            height: 60
+                            color: "steelblue"
+                            border.color: "white"
+                            Column{
+                                Text {
+                                    id: nameLabel
+                                    text: '<b>Name: </b>' + name
+                                    color: "white"
+                                    anchors.leftMargin: 10
+                                }
 
-                        Item {
-                            width: 180; height: 40
-                            Column {
-                                spacing: 3
-                                Text { text: '<b>Name : </b> ' + name ; color:"white" }
-                                Text { text: '<b>Number : </b> ' + number ; color:"white"  }
+                                Text {
+                                    id: nameLabel2
+                                    text: '<b>Name 2: </b>' + name
+                                    color: "white"
+                                    anchors.leftMargin: 10
+                                }
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    // Handle click event here
+                                    console.log("Clicked item:", index, name)
+                                }
                             }
                         }
 
@@ -989,6 +1113,7 @@ Window {
                     }
 
                     ListView {
+                        id: listVideos
                         anchors.fill: parent
                         anchors.rightMargin: 2
                         anchors.leftMargin: 2
@@ -1035,6 +1160,28 @@ Window {
                         anchors.verticalCenter: parent.verticalCenter
                         font.pointSize: 18
                         anchors.horizontalCenter: parent.horizontalCenter
+                    }
+                }
+
+                Rectangle {
+                    id: statusArea
+                    width: 241
+                    height: 45
+                    color: "#00ffffff"
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    anchors.leftMargin: 20
+                    anchors.topMargin: 20
+                    property color textColor: "White"
+                    property int fontSize: 18
+                    property bool statusVisible: false
+                    Text {
+                        anchors.fill: parent
+                        font.pointSize: statusArea.fontSize
+                        id: playBackRateStatus
+                        color: statusArea.textColor
+                        text: qsTr("text")
+                        visible: false
                     }
                 }
             }

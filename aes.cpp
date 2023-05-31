@@ -145,7 +145,7 @@ QFuture<bool> AES::decryptVideo(const QString &inputFilePath, const QString &out
         QString fullname = _fullname + "/" + outputFilePath;
         QFile inputFile(inputFilePath);
         QFile outputFile(fullname);
-
+        qDebug()<<"PATH : " <<fullname;
         if (!inputFile.open(QIODevice::ReadOnly)) {
             // Failed to open input file
             return false;
