@@ -1001,7 +1001,6 @@ Window {
                                     "description": json.descList[i]
                                 })
                             }
-
                         }
                     }
                     Component {
@@ -1009,12 +1008,15 @@ Window {
                         Rectangle {
                             width: listVideos.width
                             height: 60
-                            color: "steelblue"
-                            border.color: "white"
+                            color: index === listVideos.currentIndex ? "#567995" : "#334758"
+                              border.color: index === listVideos.currentIndex ? "#567995" : "#2d343b"
+
                             Column{
+                                id: column1
                                 Text {
                                     id: nameLabel
                                     text: '<b>Name: </b>' + name
+                                    anchors.left: parent.left
                                     color: "white"
                                     anchors.leftMargin: 10
                                 }
@@ -1022,6 +1024,7 @@ Window {
                                 Text {
                                     id: descriptionLabel
                                     text: '<b>description: </b>' + description
+                                    anchors.left: parent.left
                                     color: "white"
                                     anchors.leftMargin: 10
                                 }
@@ -1031,6 +1034,8 @@ Window {
                                 onClicked: {
                                     // Handle click event here
                                     console.log("Clicked item:", index, name)
+
+                                                    listVideos.currentIndex = index
                                 }
                             }
                         }
