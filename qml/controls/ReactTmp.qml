@@ -61,8 +61,9 @@ z:1
                 //   font: openButton.font
             }
             onClicked: {
+                 react.visible=false
                 react.parent.play()
-            react.visible=false
+
             }
         }
     }

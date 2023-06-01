@@ -140,8 +140,8 @@ Window {
                 if(position==timeLines[i]){
                     player.pause()
                     component = Qt.createComponent("qrc:/qml/controls/ReactTmp.qml");
-                    //  sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text});
-                    // sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text,"newVideo":dlg.currentFolder+"/"+data.timeline[i].vpath});
+                      sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text});
+                     sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text,"newVideo":dlg.currentFolder+"/"+data.timeline[i].vpath});
                     console.log("VPATH -------------------------------------------- "+ dlg.currentFolder+"/"+data.timeline[i].vpath)
                 }
             }
@@ -189,7 +189,7 @@ Window {
             var data =  file.read()
             //  videoName=JSON.stringify(data.fvideo)
             videoName=data.videos[0].vName
-
+            json.currentvideoId=0
             return JSON.stringify(data.fvideo)
         }
         function getidvideo(file,namevideo)
@@ -201,10 +201,17 @@ Window {
             {
 
                 var video =  data.videos[i].vName;
-                if(video==namevideo)
+                if(video==namevideo){
+                    json.currentvideoId=i
                     return videoId=i
-                else videoId=0
+
+                }
+                else {
+                    videoId=0
+                    json.currentvideoId=0
+                }
             }
+
         }
         function getinfovideo(file)
         {
@@ -240,9 +247,33 @@ Window {
             timeLines=timelines
             return timelines
         }
+        function printRecationDialog(player,file){
+
+            var position = internal.msToTimeString(player.position)
+            var data=file.read()
+            var component;
+            var sprite;
+            for(var i=0;i<timeLines.length;i++)
+            {
+                if(position==timeLines[i]){
+                    player.pause()
+                    component = Qt.createComponent("qrc:/qml/controls/ReactTmp.qml");
+                      sprite = component.createObject(player, {"messageText": data.videos[json.currentvideoId].timeline[i].msg_text});
+                  //   sprite = component.createObject(player, {"messageText": data.videos[json.currentvideoId].timeline[i].msg_text,"newVideo":dlg.currentFolder+"/"+data.timeline[i].vpath});
+                    //console.log("VPATH -------------------------------------------- "+ dlg.currentFolder+"/"+data.timeline[i].vpath)
+                }
+            }
+
+        }
 
 
     }
+    /*
+      run init() function
+     in swtich to next video from reaction
+     run
+
+      */
     AES {
         id: aes
         onEncryptionVideoProgressChanged: {
@@ -261,7 +292,7 @@ Window {
         onDecryptionProjectFinished: (projectFile)=>{
                                          jsfile.name =projectFile
                                          json.getfirstvideo(jsfile)
-                                         json.gettimelinebyid(jsfile,1)
+                                         json.gettimelinebyid(jsfile,0)
                                          console.log(json.getfilevideo(jsfile,0))
                                          json.getinfovideo(jsfile)
                                         videosMdl.updateModel()
@@ -285,7 +316,7 @@ Window {
         repeat: true
         running: player.playbackState === MediaPlayer.PlayingState
         onTriggered: {
-            json.printRecation(player,jsfile)
+           json.printRecationDialog(player,jsfile)
         }
     }
     FileDialog {
@@ -418,12 +449,13 @@ Window {
                     fillMode: VideoOutput.Stretch
 
                     onSourceChanged: {
-                        //   json.printRectangleSlider(jsfile,progressRect)
+                           json.printRectangleSlider(jsfile,progressRect)
 
                     }
                     onErrorChanged: {
                         console.log("Video Error:", player.errorString)
                     }
+
 
                     MouseArea {
                         id: iMouseArea
@@ -822,11 +854,11 @@ Window {
                         enabled: player.seekable
                         value: player.duration > 0 ? player.position / player.duration : 0
                         onWidthChanged: {
-                            //  json.printRectangleSlider(jsfile,progressRect)
+                              json.printRectangleSlider(jsfile,progressRect)
 
                         }
                         onHeightChanged: {
-                            //      json.printRectangleSlider(jsfile,progressRect)
+                                 json.printRectangleSlider(jsfile,progressRect)
                         }
                         background: Rectangle {
                             id: progressRect
