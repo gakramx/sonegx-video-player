@@ -4,9 +4,9 @@ import QtQuick.Controls 6.3
 Rectangle {
 
     property string messageText: "Hello world"
-    property url newVideo: "file://test"
-   height: Math.max(msgText.implicitHeight + 80, 88)
-z:1
+    property string newVideo: ""
+    height: Math.max(msgText.implicitHeight + 80, 88)
+    z:1
     width: Math.max(msgText.implicitWidth + 40, 206)
     radius: 5
     id: react
@@ -40,9 +40,20 @@ z:1
 
             }
             onClicked: {
-                react.parent.source=newVideo
-                  react.visible=false
-            react.parent.play()
+                timer.stop()
+                react.visible=false
+                console.log("new vide "+newVideo)
+                json.getidvideo(jsfile,newVideo)
+                for (var j = 0; j < json.proRectangles.length; j++) {
+                       json.proRectangles[j].destroy();
+                   }
+                     json.proRectangles = [];
+                json.gettimelinebyid(jsfile,json.currentvideoId)
+                console.log("Current ID : "+json.currentvideoId)
+                json.getfilevideo(jsfile,json.currentvideoId)
+//                react.parent.source=newVideo
+//                react.visible=false
+//                react.parent.play()
             }
         }
         MenuButton {
@@ -61,7 +72,7 @@ z:1
                 //   font: openButton.font
             }
             onClicked: {
-                 react.visible=false
+                react.visible=false
                 react.parent.play()
 
             }
@@ -71,9 +82,9 @@ z:1
     TextArea {
         id: msgText
         width: parent.width - 20
-            height: implicitHeight
-            wrapMode: TextArea.Wrap
-         text: messageText
+        height: implicitHeight
+        wrapMode: TextArea.Wrap
+        text: messageText
         anchors.top: parent.top
         font.pixelSize: 14
         horizontalAlignment: Text.AlignHCenter
@@ -81,7 +92,7 @@ z:1
         anchors.topMargin: 10
         readOnly: true
         selectByMouse:false
-            cursorVisible: false
+        cursorVisible: false
 
         color: "White"
     }

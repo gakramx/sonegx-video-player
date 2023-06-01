@@ -140,15 +140,14 @@ Window {
                 if(position==timeLines[i]){
                     player.pause()
                     component = Qt.createComponent("qrc:/qml/controls/ReactTmp.qml");
-                      sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text});
-                     sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text,"newVideo":dlg.currentFolder+"/"+data.timeline[i].vpath});
+                    sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text});
+                    sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text,"newVideo":dlg.currentFolder+"/"+data.timeline[i].vpath});
                     console.log("VPATH -------------------------------------------- "+ dlg.currentFolder+"/"+data.timeline[i].vpath)
                 }
             }
 
         }
         function printRectangleSlider(file,parentComponent){
-
             if(proRectangles==0){
                 console.log("Work  " )
                 var component;
@@ -166,16 +165,13 @@ Window {
             else if (timeLines!=0 && proRectangles!=0){
 
                 for (var i = 0; i < proRectangles.length; i++) {
-
                     console.log("Resize  " + timeLines[i])
                     positionRec =  positionRedRectangle(timeLines[i])
                     console.log("Resize positsion  " + positionRec )
                     proRectangles[i].x=positionRec-i
                 }
-
             }
         }
-
         function positionRedRectangle(targetTime) {
             var targetPosition = internal.timeToMilliseconds(
                         targetTime) / player.duration
@@ -225,14 +221,15 @@ Window {
                 nameslist.push(data.videos[i].vName)
                 desclist.push(data.videos[i].desc)
             }
-          namesList= nameslist
-          descList= desclist
+            namesList= nameslist
+            descList= desclist
         }
         function getfilevideo(file,id)
         {
             var data =  file.read()
             videoFile  =  data.videos[id].vbaseName;
             filevideoChanged(videoFile)
+             console.log("getfilevideo : "+videoFile)
             return videoFile;
         }
         function gettimelinebyid(file,videoid)
@@ -258,8 +255,8 @@ Window {
                 if(position==timeLines[i]){
                     player.pause()
                     component = Qt.createComponent("qrc:/qml/controls/ReactTmp.qml");
-                      sprite = component.createObject(player, {"messageText": data.videos[json.currentvideoId].timeline[i].msg_text});
-                  //   sprite = component.createObject(player, {"messageText": data.videos[json.currentvideoId].timeline[i].msg_text,"newVideo":dlg.currentFolder+"/"+data.timeline[i].vpath});
+                   // sprite = component.createObject(player, {"messageText": data.videos[json.currentvideoId].timeline[i].msg_text});
+                      sprite = component.createObject(player, {"messageText": data.videos[json.currentvideoId].timeline[i].msg_text,"newVideo":data.videos[json.currentvideoId].timeline[i].wvideo});
                     //console.log("VPATH -------------------------------------------- "+ dlg.currentFolder+"/"+data.timeline[i].vpath)
                 }
             }
@@ -278,6 +275,7 @@ Window {
         id: aes
         onEncryptionVideoProgressChanged: {
             openArea.visible=false
+            player.visible = false
             loadArea.visible=true
             loadLabe.text="Loading "+ progress +" %"
             decryptProgress.value=progress
@@ -286,8 +284,10 @@ Window {
                                       loadArea.visible = false
                                       console.log(fullname)
                                       var videoFullname="file://"+fullname
+
                                       player.source=videoFullname
-                                      console.log(player.source)
+                                        player.visible = true
+                                      console.log("NEW source player :"+player.source)
                                   }
         onDecryptionProjectFinished: (projectFile)=>{
                                          jsfile.name =projectFile
@@ -295,7 +295,7 @@ Window {
                                          json.gettimelinebyid(jsfile,0)
                                          console.log(json.getfilevideo(jsfile,0))
                                          json.getinfovideo(jsfile)
-                                        videosMdl.updateModel()
+                                         videosMdl.updateModel()
                                      }
     }
     Connections {
@@ -316,7 +316,7 @@ Window {
         repeat: true
         running: player.playbackState === MediaPlayer.PlayingState
         onTriggered: {
-           json.printRecationDialog(player,jsfile)
+            json.printRecationDialog(player,jsfile)
         }
     }
     FileDialog {
@@ -345,11 +345,11 @@ Window {
         }
         onRejected: {
             console.log("Canceled")
-            //   aes.encryptVideo("input.mp4","output.enc","1234")
+             //  aes.encryptVideo("notes.mp4","videotest2.dat0","1234")
             // var data =aes.encrypt("1.json", "1234567891234567")
             //   console.log(data)
             //  var data2=aes.decrypt("1.json.encrypted", "1234567891234567")
-           // var data2=aes.encrypt("project1", "1234567891234567")
+          //   var data2=aes.encrypt("project1", "1234567891234567")
             // console.log(data2)
             //  aes.decryptVideo("output.enc","input.mp4","1234")
 
@@ -449,7 +449,7 @@ Window {
                     fillMode: VideoOutput.Stretch
 
                     onSourceChanged: {
-                           json.printRectangleSlider(jsfile,progressRect)
+                        json.printRectangleSlider(jsfile,progressRect)
 
                     }
                     onErrorChanged: {
@@ -854,11 +854,11 @@ Window {
                         enabled: player.seekable
                         value: player.duration > 0 ? player.position / player.duration : 0
                         onWidthChanged: {
-                              json.printRectangleSlider(jsfile,progressRect)
+                            json.printRectangleSlider(jsfile,progressRect)
 
                         }
                         onHeightChanged: {
-                                 json.printRectangleSlider(jsfile,progressRect)
+                            json.printRectangleSlider(jsfile,progressRect)
                         }
                         background: Rectangle {
                             id: progressRect
@@ -1029,9 +1029,9 @@ Window {
                             for (var i = 0; i < json.namesList.length; i++) {
                                 console.log(json.descList[i])
                                 videosMdl.append({
-                                    "name": json.namesList[i],
-                                    "description": json.descList[i]
-                                })
+                                                     "name": json.namesList[i],
+                                                     "description": json.descList[i]
+                                                 })
                             }
                         }
                     }
@@ -1041,7 +1041,7 @@ Window {
                             width: listVideos.width
                             height: 60
                             color: index === listVideos.currentIndex ? "#567995" : "#334758"
-                              border.color: index === listVideos.currentIndex ? "#567995" : "#2d343b"
+                            border.color: index === listVideos.currentIndex ? "#567995" : "#2d343b"
 
                             Column{
                                 id: column1
@@ -1067,7 +1067,7 @@ Window {
                                     // Handle click event here
                                     console.log("Clicked item:", index, name)
 
-                                                    listVideos.currentIndex = index
+                                    listVideos.currentIndex = index
                                 }
                             }
                         }
