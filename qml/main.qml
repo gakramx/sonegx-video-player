@@ -288,6 +288,8 @@ Window {
                                       player.source=videoFullname
                                         player.visible = true
                                       console.log("NEW source player :"+player.source)
+                                        animationOpenMenu.start()
+
                                   }
         onDecryptionProjectFinished: (projectFile)=>{
                                          jsfile.name =projectFile
@@ -557,8 +559,8 @@ Window {
                 }
                 Rectangle {
                     id: playerMenu
-                    y: 433
-                    height: 164
+                  //  y: 433
+                    height: 0
                     opacity: 1
                     color: "#e41b2631"
                     //  z: 1
@@ -658,7 +660,6 @@ Window {
 
                                     } else {
                                         player.play()
-
                                     }
                                 }
 
@@ -992,8 +993,8 @@ Window {
 
                 Rectangle {
                     id: optionMenu
-                    x: 814
-                    width:  200
+                //    x: 814
+                //    width:  200
                     color: "#e41b2631"
                     anchors.right: parent.right
                     anchors.top: player.top
@@ -1095,7 +1096,7 @@ Window {
                     id: loadArea
                     width: 567
                     height: 200
-                    visible: true
+                    visible: false
                     color: "#00000000"
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -1304,3 +1305,9 @@ Window {
 }
 
 
+
+/*##^##
+Designer {
+    D{i:0}D{i:25;invisible:true}
+}
+##^##*/
