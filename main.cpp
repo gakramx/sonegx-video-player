@@ -2,8 +2,10 @@
 #include <QQmlApplicationEngine>
 #include <jsonfile.h>
 #include "aes.h"
+
 int main(int argc, char *argv[])
 {
+
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
      qmlRegisterType<AES>("AesCrypt", 1, 0, "AES");

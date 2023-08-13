@@ -35,7 +35,7 @@ set_target_properties(appDapp PROPERTIES
 )
 
 target_link_libraries(appDapp
-    PRIVATE QtAES Qt6::Quick Qt6::Concurrent)
+    PRIVATE QtAES  Qt6::Quick Qt6::Concurrent)
 
 install(TARGETS appDapp
     BUNDLE DESTINATION .

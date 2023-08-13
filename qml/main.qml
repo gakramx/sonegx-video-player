@@ -283,9 +283,9 @@ Window {
         onDecryptionVideoFinished:(fullname) => {
                                       loadArea.visible = false
                                       console.log(fullname)
-                                      var videoFullname="file://"+fullname
+                                     var videoFullname="file://"+fullname
 
-                                      player.source=videoFullname
+                                      player.source=  videoFullname
                                         player.visible = true
                                       console.log("NEW source player :"+player.source)
                                         animationOpenMenu.start()
@@ -351,11 +351,9 @@ Window {
             // var data =aes.encrypt("1.json", "1234567891234567")
             //   console.log(data)
             //  var data2=aes.decrypt("1.json.encrypted", "1234567891234567")
-          //   var data2=aes.encrypt("project1", "1234567891234567")
+            // var data2=aes.encrypt("testproject", "1234567891234567")
             // console.log(data2)
             //  aes.decryptVideo("output.enc","input.mp4","1234")
-
-
             return
         }
     }
@@ -556,6 +554,7 @@ Window {
                             playBtn.btnIconSource = "qrc:/images/icons/cil-media-play.svg"
                         }
                     }
+
                 }
                 Rectangle {
                     id: playerMenu
