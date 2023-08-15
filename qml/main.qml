@@ -229,7 +229,7 @@ Window {
             var data =  file.read()
             videoFile  =  data.videos[id].vbaseName;
             filevideoChanged(videoFile)
-             console.log("getfilevideo : "+videoFile)
+            console.log("getfilevideo : "+videoFile)
             return videoFile;
         }
         function gettimelinebyid(file,videoid)
@@ -255,8 +255,8 @@ Window {
                 if(position==timeLines[i]){
                     player.pause()
                     component = Qt.createComponent("qrc:/qml/controls/ReactTmp.qml");
-                   // sprite = component.createObject(player, {"messageText": data.videos[json.currentvideoId].timeline[i].msg_text});
-                      sprite = component.createObject(player, {"messageText": data.videos[json.currentvideoId].timeline[i].msg_text,"newVideo":data.videos[json.currentvideoId].timeline[i].wvideo});
+                    // sprite = component.createObject(player, {"messageText": data.videos[json.currentvideoId].timeline[i].msg_text});
+                    sprite = component.createObject(player, {"messageText": data.videos[json.currentvideoId].timeline[i].msg_text,"newVideo":data.videos[json.currentvideoId].timeline[i].wvideo});
                     //console.log("VPATH -------------------------------------------- "+ dlg.currentFolder+"/"+data.timeline[i].vpath)
                 }
             }
@@ -283,12 +283,15 @@ Window {
         onDecryptionVideoFinished:(fullname) => {
                                       loadArea.visible = false
                                       console.log(fullname)
-                                     var videoFullname="file://"+fullname
+                                      var videoFullname="file://"+fullname
 
                                       player.source=  videoFullname
-                                        player.visible = true
+                                      player.visible = true
                                       console.log("NEW source player :"+player.source)
-                                        animationOpenMenu.start()
+                                      animationOpenMenu.start()
+
+                                      //     player.volume(0)
+
 
                                   }
         onDecryptionProjectFinished: (projectFile)=>{
@@ -347,7 +350,7 @@ Window {
         }
         onRejected: {
             console.log("Canceled")
-             //  aes.encryptVideo("notes.mp4","videotest2.dat0","1234")
+            //  aes.encryptVideo("notes.mp4","videotest2.dat0","1234")
             // var data =aes.encrypt("1.json", "1234567891234567")
             //   console.log(data)
             //  var data2=aes.decrypt("1.json.encrypted", "1234567891234567")
@@ -447,15 +450,23 @@ Window {
                     volume: volumeSlider.value
                     playbackRate: 1.0
                     fillMode: VideoOutput.Stretch
-
+                    property bool firstRun: true
                     onSourceChanged: {
                         json.printRectangleSlider(jsfile,progressRect)
-
+                        if(firstRun)
+                        volume=0.0
+                        play()
                     }
                     onErrorChanged: {
                         console.log("Video Error:", player.errorString)
                     }
-
+                    onPositionChanged: {
+                        if(position>300&&firstRun){
+                            pause()
+                            volume=volumeSlider.value
+                            firstRun=false
+                        }
+                    }
 
                     MouseArea {
                         id: iMouseArea
@@ -477,8 +488,10 @@ Window {
                                                animationOpenMenu.start()
                                                timeranimationMenu.restart()
                                            } else if (player.playbackState
-                                                      == MediaPlayer.PlayingState)
+                                                      == MediaPlayer.PlayingState){
                                            animationCloseMenu.start()
+                                               animationCloseoptionMenu.start()
+                                           }
                                        }
                                    }
                         onDoubleClicked: {
@@ -488,6 +501,7 @@ Window {
                             } else {
                                 player.play()
                                 animationCloseMenu.start()
+                                animationCloseoptionMenu.start()
                             }
                         }
                     }
@@ -555,10 +569,11 @@ Window {
                         }
                     }
 
+
                 }
                 Rectangle {
                     id: playerMenu
-                  //  y: 433
+                    //  y: 433
                     height: 0
                     opacity: 1
                     color: "#e41b2631"
@@ -992,8 +1007,8 @@ Window {
 
                 Rectangle {
                     id: optionMenu
-                //    x: 814
-                //    width:  200
+                    //    x: 814
+                    //    width:  200
                     color: "#e41b2631"
                     anchors.right: parent.right
                     anchors.top: player.top
@@ -1066,7 +1081,8 @@ Window {
                                 onClicked: {
                                     // Handle click event here
                                     console.log("Clicked item:", index, name)
-
+                                    player.pause()
+                                    console.log(json.getfilevideo(jsfile,index))
                                     listVideos.currentIndex = index
                                 }
                             }
@@ -1156,6 +1172,7 @@ Window {
                 onTriggered: {
                     if (player.playbackState == MediaPlayer.PlayingState)
                         animationCloseMenu.start()
+                    animationCloseoptionMenu.start()
                 }
             }
             Rectangle {
