@@ -142,21 +142,21 @@ Window {
                     component = Qt.createComponent("qrc:/qml/controls/ReactTmp.qml");
                     sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text});
                     sprite = component.createObject(player, {"messageText": data.timeline[i].msg_text,"newVideo":dlg.currentFolder+"/"+data.timeline[i].vpath});
-                 //   console.log("VPATH -------------------------------------------- "+ dlg.currentFolder+"/"+data.timeline[i].vpath)
+                    //   console.log("VPATH -------------------------------------------- "+ dlg.currentFolder+"/"+data.timeline[i].vpath)
                 }
             }
 
         }
         function printRectangleSlider(file,parentComponent){
             if(proRectangles==0){
-               // console.log("Work  " )
+                // console.log("Work  " )
                 var component;
                 var sprite;
                 var positionRec;
                 for (var i = 0; i < timeLines.length; i++) {
-                  //  console.log("Create  " + timeLines[i])
+                    //  console.log("Create  " + timeLines[i])
                     positionRec =  positionRedRectangle(timeLines[i])
-                  //  console.log("Create positsion   " + positionRec )
+                    //  console.log("Create positsion   " + positionRec )
                     component = Qt.createComponent("qrc:/qml/controls/PRec.qml");
                     sprite = component.createObject(parentComponent, {"x": positionRec-i});
                     proRectangles.push(sprite)
@@ -165,9 +165,9 @@ Window {
             else if (timeLines!=0 && proRectangles!=0){
 
                 for (var i = 0; i < proRectangles.length; i++) {
-                   // console.log("Resize  " + timeLines[i])
+                    // console.log("Resize  " + timeLines[i])
                     positionRec =  positionRedRectangle(timeLines[i])
-                  //  console.log("Resize positsion  " + positionRec )
+                    //  console.log("Resize positsion  " + positionRec )
                     proRectangles[i].x=positionRec-i
                 }
             }
@@ -229,7 +229,7 @@ Window {
             var data =  file.read()
             videoFile  =  data.videos[id].vbaseName;
             filevideoChanged(videoFile)
-          //  console.log("getfilevideo : "+videoFile)
+            //  console.log("getfilevideo : "+videoFile)
             return videoFile;
         }
         function gettimelinebyid(file,videoid)
@@ -238,7 +238,7 @@ Window {
             var timelines = [];
             for(var i = 0; i < data.videos[videoid].timeline.length; i++)
             {
-             //   console.log(data.videos[videoid].timeline[i].show_time)
+                //   console.log(data.videos[videoid].timeline[i].show_time)
                 timelines.push(data.videos[videoid].timeline[i].show_time)
             }
             timeLines=timelines
@@ -282,12 +282,12 @@ Window {
         }
         onDecryptionVideoFinished:(fullname) => {
                                       loadArea.visible = false
-                                     // console.log(fullname)
+                                      // console.log(fullname)
                                       var videoFullname="file://"+fullname
 
                                       player.source=  videoFullname
                                       player.visible = true
-                                  //    console.log("NEW source player :"+player.source)
+                                      //    console.log("NEW source player :"+player.source)
                                       animationOpenMenu.start()
 
                                       //     player.volume(0)
@@ -298,7 +298,7 @@ Window {
                                          jsfile.name =projectFile
                                          json.getfirstvideo(jsfile)
                                          json.gettimelinebyid(jsfile,0)
-                                       //  console.log(json.getfilevideo(jsfile,0))
+                                         json.getfilevideo(jsfile,0)
                                          json.getinfovideo(jsfile)
                                          videosMdl.updateModel()
                                      }
@@ -330,7 +330,7 @@ Window {
         title: "Please choose a video file"
         modality: Qt.WindowModal
         onAccepted: {
-          //  console.log("You chose: " + dlg.currentFile)
+            //  console.log("You chose: " + dlg.currentFile)
             openArea.visible = false
             // player.source = dlg.currentFile
             // player.play()
@@ -454,7 +454,7 @@ Window {
                     onSourceChanged: {
                         json.printRectangleSlider(jsfile,progressRect)
                         if(firstRun)
-                        volume=0.0
+                            volume=0.0
                         play()
                     }
                     onErrorChanged: {
@@ -489,7 +489,7 @@ Window {
                                                timeranimationMenu.restart()
                                            } else if (player.playbackState
                                                       == MediaPlayer.PlayingState){
-                                           animationCloseMenu.start()
+                                               animationCloseMenu.start()
                                                animationCloseoptionMenu.start()
                                            }
                                        }
@@ -1041,7 +1041,7 @@ Window {
                         function updateModel(){
                             videosMdl.clear()
                             for (var i = 0; i < json.namesList.length; i++) {
-                            //    console.log(json.descList[i])
+                                //    console.log(json.descList[i])
                                 videosMdl.append({
                                                      "name": json.namesList[i],
                                                      "description": json.descList[i]

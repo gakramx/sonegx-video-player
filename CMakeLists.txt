@@ -9,7 +9,6 @@ find_package(Qt6 6.4 COMPONENTS Quick  Core Concurrent REQUIRED)
 qt_add_resources( QMLRC qml.qrc
 )
 qt_add_resources(IMAGESRC images.qrc
-
 )
 qt_add_executable(sonegx-video-player
     main.cpp
