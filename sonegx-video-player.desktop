@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Sonegx video player
+Comment=Reaction videos player
+Exec=sonegx-video-player
+Icon=/usr/share/icons/hicolor/128x128/apps/sonegx-video-player.png
+Terminal=false
+Categories=Multimedia;
