@@ -15,14 +15,17 @@ public:
     Q_INVOKABLE QFuture<bool> decryptVideo(const QString& inputFilePath, const QString& outputFilePath,const QByteArray& encryptionKey);
     Q_INVOKABLE QString getoutputFullFilename() const;
     void setoutputFullFilename(const QString& newFilename);
-     ~AES();
+    Q_INVOKABLE QString getinputPath() const;
+    void setinputPath(const QString& inputPath);
+    ~AES();
 signals:
     void encryptionVideoProgressChanged(int progress);
     void decryptionVideoFinished(const QString &fullpathname);
     void decryptionProjectFinished(const QString &projecFile);
 private:
-        QTemporaryDir dir;
-        QString outputFullFilename;
+    QTemporaryDir dir;
+    QString outputFullFilename;
+    QString m_inputPath;
 };
 
 #endif // AES_H
