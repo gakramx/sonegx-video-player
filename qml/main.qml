@@ -229,7 +229,7 @@ Window {
             var data =  file.read()
             videoFile  =  data.videos[id].vbaseName;
             filevideoChanged(videoFile)
-            //  console.log("getfilevideo : "+videoFile)
+            console.log("getfilevideo : "+videoFile)
             return videoFile;
         }
         function gettimelinebyid(file,videoid)
@@ -273,6 +273,7 @@ Window {
       */
     AES {
         id: aes
+         property string workPath
         onEncryptionVideoProgressChanged: {
             openArea.visible=false
             player.visible = false
@@ -295,6 +296,8 @@ Window {
 
                                   }
         onDecryptionProjectFinished: (projectFile)=>{
+                                         aes.workPath=getinputPath();
+                                         console.log(workPath)
                                          jsfile.name =projectFile
                                          json.getfirstvideo(jsfile)
                                          json.gettimelinebyid(jsfile,0)
@@ -307,7 +310,8 @@ Window {
         target: json
         function onFilevideoChanged(videoFile){
             // Handle the emitted signal
-            aes.decryptVideo(videoFile,videoFile,"1234")
+            var videoin=aes.workPath+"/"
+            aes.decryptVideo(videoin+videoFile,videoFile,"1234")
         }
     }
 
