@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QVariant>
 #include <QtConcurrent>
+#include <QFutureWatcher>
 class AES : public QObject
 {
     Q_OBJECT
@@ -18,6 +19,9 @@ public:
     Q_INVOKABLE QString getinputPath() const;
     void setinputPath(const QString& inputPath);
     ~AES();
+public slots:
+    void handleDecryptionFinished();
+    void handleDecryptionCancelled();
 signals:
     void encryptionVideoProgressChanged(int progress);
     void decryptionVideoFinished(const QString &fullpathname);
@@ -26,6 +30,7 @@ private:
     QTemporaryDir dir;
     QString outputFullFilename;
     QString m_inputPath;
+    QFutureWatcher<bool> decryptionWatcher;
 };
 
 #endif // AES_H

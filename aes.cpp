@@ -8,6 +8,8 @@ AES::AES(QObject *parent)
     : QObject{parent}
 {
     setoutputFullFilename(dir.path());
+    connect(&decryptionWatcher, &QFutureWatcher<bool>::finished, this, &AES::handleDecryptionFinished);
+    connect(&decryptionWatcher, &QFutureWatcher<bool>::canceled, this, &AES::handleDecryptionCancelled);
 }
 QVariant AES::encrypt(const QString& filePath, QByteArray key)
 {
@@ -137,7 +139,12 @@ QFuture<bool> AES::encryptVideo(const QString &inputFilePath, const QString &out
 
 QFuture<bool> AES::decryptVideo(const QString &inputFilePath, const QString &outputFilePath, const QByteArray &encryptionKey)
 {
-    return QtConcurrent::run([this,inputFilePath, outputFilePath, encryptionKey]() {
+    if (decryptionWatcher.isRunning()) {
+        // If a decryption operation is already running, cancel it
+        decryptionWatcher.cancel();
+        decryptionWatcher.waitForFinished();
+    }
+    QFuture<bool> decryptionFuture = QtConcurrent::run([this,inputFilePath, outputFilePath, encryptionKey]() {
         // TODO: check file is exist before
         if (!dir.isValid()) {
             return false;
@@ -172,6 +179,13 @@ QFuture<bool> AES::decryptVideo(const QString &inputFilePath, const QString &out
         int keyIndex = 0;
 
         while (!inputFile.atEnd()) {
+            if (decryptionWatcher.future().isCanceled()) {
+                qDebug() << "Decryption cancelled.";
+                outputFile.close();
+                inputFile.close();
+                outputFile.remove(); // Delete partially decrypted output file
+                return false; // Indicate that decryption was cancelled
+            }
             qint64 bytesRead = inputFile.read(buffer, bufferSize);
 
             for (qint64 i = 0; i < bytesRead; ++i) {
@@ -197,6 +211,10 @@ QFuture<bool> AES::decryptVideo(const QString &inputFilePath, const QString &out
         emit decryptionVideoFinished(fullname);
         return true;
     });
+    // Watch the new decryption future
+    decryptionWatcher.setFuture(decryptionFuture);
+
+    return decryptionFuture;
 }
 QString AES::getoutputFullFilename() const {
     return outputFullFilename;
@@ -211,6 +229,19 @@ QString AES::getinputPath() const {
 void AES::setinputPath(const QString& inputPath)
 {
     m_inputPath = inputPath;
+}
+void AES::handleDecryptionFinished()
+{
+    qDebug() << "Decryption operation finished.";
+    // You can handle any necessary cleanup or actions here
+    // ...
+}
+void AES::handleDecryptionCancelled()
+{
+    qDebug() << "Decryption operation cancelled.";
+    // Handle decryption cancelled
+    // For example, you might emit a signal or update UI here
+    // ...
 }
 AES::~AES()
 {

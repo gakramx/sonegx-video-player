@@ -293,7 +293,6 @@ Window {
 
                                       //     player.volume(0)
 
-
                                   }
         onDecryptionProjectFinished: (projectFile)=>{
                                          aes.workPath=getinputPath();
