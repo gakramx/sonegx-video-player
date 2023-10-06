@@ -15,7 +15,7 @@ Window {
     id: mainWindow
     width: 1024
     height: 640
-    title: qsTr("Sonegx video player")
+    title: qsTr("Sonegx video player MPV")
     visible: true
     color: "#00000000"
     minimumHeight: 500
