@@ -1,12 +1,15 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <jsonfile.h>
+#include <mpvobject.h>
 #include "aes.h"
 
 int main(int argc, char *argv[])
 {
 
     QGuiApplication app(argc, argv);
+    std::setlocale(LC_NUMERIC, "C");
+    qmlRegisterType<MpvObject>("mpvPlayer", 1, 0, "MpvObject");
     QQmlApplicationEngine engine;
     qmlRegisterType<AES>("AesCrypt", 1, 0, "AES");
     qmlRegisterType<JsonFile>("JsonFile", 1, 0, "JsonFile");
