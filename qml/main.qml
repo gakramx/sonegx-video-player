@@ -8,6 +8,7 @@ import QtQuick.Dialogs
 import QtQuick.Controls.Material
 import JsonFile
 import AesCrypt
+import mpvPlayer 1.0
 Window {
     Material.theme: Material.Dark
     Material.accent: Material.Blue
