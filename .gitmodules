@@ -1,0 +1,3 @@
+[submodule "QMpv"]
+	path = QMpv
+	url = https://github.com/gakramx/QMpv.git
