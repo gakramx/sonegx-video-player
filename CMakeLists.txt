@@ -25,7 +25,8 @@ qt_add_executable(sonegx-video-player
 qt_add_qml_module(sonegx-video-player
     URI Dapp
     VERSION 1.0
-    SOURCES mpvobject.cpp mpvobject.h qthelper.hpp
+    SOURCES QMpv/qmpv.cpp QMpv/qmpv.h QMpv/qthelper.hpp
+
 )
 
 set_target_properties(sonegx-video-player PROPERTIES
