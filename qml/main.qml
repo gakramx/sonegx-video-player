@@ -285,7 +285,7 @@ Window {
       */
     AES {
         id: aes
-         property string workPath
+        property string workPath
         onEncryptionVideoProgressChanged: {
             openArea.visible=false
             player.visible = false
@@ -456,21 +456,7 @@ Window {
                 anchors.rightMargin: 5
                 anchors.leftMargin: 5
                 anchors.bottomMargin: 5
-
                 clip: true
-//                MPV {
-//                    id: renderer
-//                    anchors.fill: parent
-
-//                    MouseArea {
-//                        anchors.fill: parent
-//                        onClicked:{ renderer.source="/home/akram/Projects/build-sngx-player-Desktop_Qt_6_5_1_GCC_64bit-Debug/input.mp4"
-//                            console.log(renderer.playbackState)
-//                        }
-
-//                    }
-//                    onPlaybackStateChanged:   console.log(renderer.playbackState)
-//                }
                 MPV {
                     id: player
                     anchors.fill: parent
@@ -480,17 +466,18 @@ Window {
                     //fillMode: VideoOutput.Stretch
                     property bool firstRun: true
                     onSourceChanged: {
+                        console.log("onSourceChanged")
                         json.printRectangleSlider(jsfile,progressRect)
                         if(firstRun)
                             volume=0.0
                         play()
                     }
-////                    onErrorChanged: {
-////                        console.log("Video Error:", player.errorString)
-////                    }
+                    ////                    onErrorChanged: {
+                    ////                        console.log("Video Error:", player.errorString)
+                    ////                    }
                     onPositionChanged: {
-                        if(position>300&&firstRun){
-                            pause()
+                        if(player.position>0.5&&firstRun){
+                            player.pause()
                             volume=volumeSlider.value
                             firstRun=false
                         }
@@ -549,15 +536,20 @@ Window {
                     }
                     function updatePlaybackRate(delta) {
                         // modify the playback rate by adding the delta value
-                        playbackRate += delta
-                        if (playbackRate > 1.5) {
+                        var tempplaybackRate = playbackRate+delta
+                        if (tempplaybackRate > 1.5) {
                             playbackRate = 1.5
-                        } else if (playbackRate < 0.5) {
+                        } else if (tempplaybackRate < 0.5) {
                             playbackRate = 0.5
                         }
+                        else{
+                            playbackRate+=delta
+                        }
                         playBackRateStatus.text= "Speed: "+ playbackRate.toFixed(1)+"x"
+
                         playBackRateStatus.visible = true
                         timerHidestatus.restart()
+
                     }
                     Timer {
                         id: timerHidestatus
@@ -571,23 +563,23 @@ Window {
 
                     function switchFillMode() {
                         // switch the fill mode to the next value in the sequence
-//                        switch (player.fillMode) {
-//                        case VideoOutput.Stretch:
-//                            player.fillMode = VideoOutput.PreserveAspectCrop
-//                            break
-//                        case VideoOutput.PreserveAspectCrop:
-//                            player.fillMode = VideoOutput.PreserveAspectFit
-//                            break
-//                        case VideoOutput.PreserveAspectFit:
-//                            player.fillMode = VideoOutput.Stretch
-//                            break
-//                        default:
-//                            player.fillMode = VideoOutput.Stretch
-//                        }
+                        //                        switch (player.fillMode) {
+                        //                        case VideoOutput.Stretch:
+                        //                            player.fillMode = VideoOutput.PreserveAspectCrop
+                        //                            break
+                        //                        case VideoOutput.PreserveAspectCrop:
+                        //                            player.fillMode = VideoOutput.PreserveAspectFit
+                        //                            break
+                        //                        case VideoOutput.PreserveAspectFit:
+                        //                            player.fillMode = VideoOutput.Stretch
+                        //                            break
+                        //                        default:
+                        //                            player.fillMode = VideoOutput.Stretch
+                        //                        }
                     }
 
                     onPlaybackStateChanged: {
-                         console.log("STATUS PLAYER ")
+                        console.log("STATUS PLAYER ")
                         console.log(playbackState)
                         if (playbackState == MediaPlayer.PlayingState) {
                             // progressSlider.positionRedRectangle()
@@ -760,6 +752,9 @@ Window {
                             anchors.leftMargin: 2
 
                             onValueChanged: {
+                                player.volume=value
+                                console.log(volumeSlider.value)
+                                console.log("Player volume ",player.volume)
                                 if(value==0)
                                     volume_icon.source="qrc:/images/icons/cil-volume-off.svg"
                                 else if (value<=0.5)
@@ -900,7 +895,7 @@ Window {
                         onHoveredChanged: hovered ? timeranimationMenu.stop(
                                                         ) : timeranimationMenu.restart()
                         z: 1
-                     //   enabled: player.seekable
+                        //   enabled: player.seekable
                         value: player.duration > 0 ? player.position / player.duration : 0
                         onWidthChanged: {
                             json.printRectangleSlider(jsfile,progressRect)
@@ -984,7 +979,7 @@ Window {
                 Rectangle {
                     id: openArea
                     width: 308
-               //     visible: false
+                    //     visible: false
                     color: "transparent"
                     //   color: "white"
                     anchors.top: parent.top
