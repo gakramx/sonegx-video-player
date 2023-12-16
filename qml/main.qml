@@ -299,6 +299,7 @@ Window {
                                       var videoFullname="file://"+fullname
 
                                       player.source=  videoFullname
+
                                       player.visible = true
                                       //    console.log("NEW source player :"+player.source)
                                       animationOpenMenu.start()
